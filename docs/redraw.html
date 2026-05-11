@@ -1,0 +1,102 @@
+<section>
+    <h1>Redraw</h1>
+
+    <p>
+        redraw() is called when the diagram needs to be rebuilt, for example after user input changes
+        parameters such as slit distance or wavelength.
+    </p>
+
+    <h3>overview</h3>
+
+    <p>
+        The function first checks whether a redraw is already in progress. If so, it returns immediately.
+        This prevents overlapping redraw operations.
+    </p>
+
+    <pre>
+        if (drawing) return
+    </pre>
+
+    <p>
+        It then stops the measurement animation by setting fire to false, and marks drawing as true while
+        the diagram is being rebuilt.
+    </p>
+
+    <pre>
+        fire = false
+        drawing = true
+    </pre>
+
+    <p>
+        The canvas is cleared, and resizeCanvas() is called so the canvas dimensions match the current window size.
+    </p>
+
+    <pre>
+        cnvContext.clearRect(0, 0, canvas.width, canvas.height)
+        resizeCanvas()
+    </pre>
+
+    <p>
+        Existing SVG circles and lines are then selected and removed. This clears the previously drawn static diagram,
+        barrier, plane waves, and trajectory lines before drawing the new version.
+    </p>
+
+    <pre>
+const circles = document.querySelectorAll("circle")
+const lines = document.querySelectorAll("line")
+
+for (const circle of circles) {
+    circle.remove()
+}
+
+for (const line of lines) {
+    line.remove()
+}
+    </pre>
+
+    <p>
+        The static diagram is then rebuilt in order. First the circular wave peaks are drawn, then the left side is
+        covered, then the barrier is redrawn using the current values of d and slitWidth. Finally the incoming plane
+        waves are drawn again.
+    </p>
+
+    <pre>
+        drawStaticDiagram("#fff", "2")
+        coverLeft()
+        drawBarrier(d, slitWidth)
+        drawPlaneWaves(k0, "#fff", "2")
+    </pre>
+
+    <p>
+        Since redraw() stops the animation, the stop icon is hidden and the play icon is shown again.
+    </p>
+
+    <pre>
+        stop.style.display = "none"
+        play.style.display = "block"
+    </pre>
+
+    <p>
+        At the end, drawing is set back to false, allowing future redraws.
+    </p>
+
+    <pre>
+        drawing = false
+    </pre>
+
+    <div class="flowchart">
+        <div class="group">
+            <div class="box">redraw()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">resizeCanvas()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">drawStaticDiagram()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">coverLeft()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">drawBarrier()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">drawPlaneWaves()</div>
+        </div>
+    </div>
+</section>

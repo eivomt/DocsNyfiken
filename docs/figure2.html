@@ -1,0 +1,75 @@
+<section>
+    <h1>Figure 2: time independent</h1>
+
+    <p>
+        <pre>
+        function renderFig2() {
+            drawTimeIndependentYDistribution({
+                canvas: figureCanvas,
+                resolution: 1400,
+                d,
+                k0,
+                sigma,
+                tMin: 0,
+                tMax: 5,
+                L: 10
+            })
+        }
+        </pre>
+    </p>
+
+    <h3>overview</h3>
+
+    <p>
+        renderFig2() is a wrapper function which calls drawTimeIndependentYDistribution() passing the canvas to draw on, 
+        resolution, some global variables and the time interval.
+    </p>
+
+    <p>
+        drawTimeIndependentYDistribution() then clears the canvas it was sent and calls getYDistributionFromDetectionFlux()
+        which creates an array for each y (the number of which is determined by the resolution). For each y it calls
+        boundaryFlux for each timeStep (the number of which is yet again determined by resolution) and stores the sum of
+        all weights for its y value. It then normalizes these sums and returns a list of weights for all y values <math-field read-only virtual-keyboard-mode="off" menu-items="[]">w \in (0,1)</math-field>.
+    </p>
+
+    <p>
+        boundaryFlux() loop is explained <a href="">here</a>
+    </p>
+
+    <p>
+        drawTimeIndependentYDistribution() then finds the largest weight and stores it as maxW, maps (0,maxW) to (0,255) and 
+        uses this list of weights by; for each y value going through all pixels,
+        e.g. all x values in the canvas with that y value, and sets its color to rgb(w,w,w).
+    </p>
+
+    <p>
+        Next it creates two SVG polylines for the graph representation of the distribution (it makes two instead of one 
+        so that, when animated, the graph is drawn from the center outwards instead of from one edge to the other). this
+        is done as follows: delete old graph if in DOM, find center point and store all points in two separate arrays
+        topPoints and bottomPoints, while doing that it also maps (0,maxW) to (0,canvasWidth) (minus a little bit of
+        padding). it then creates the actual SVG's from these points by calling makePolyline() (defined within the
+        function) and adds a strokeDashOffset animation to them both.
+    </p>
+
+    <div class="flowchart">
+        <div class="box">renderFig2()</div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="box">drawTime<br/>Independent<br>YDistribution()</div>
+
+        <div class="arrow">→</div>
+
+        <div class="box">getYDistribution<br/>From<br>DetectionFlux()</div>
+
+        <div class="arrow">→</div>
+    
+        <div class="group">
+            <div class="box">boundaryFlux()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">psiAndGradAt()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">velocityRaw()</div>
+        </div>
+    </div>
+</section>

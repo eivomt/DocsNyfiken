@@ -1,0 +1,67 @@
+<section>
+    <h1>measurement</h1>
+
+    <p>
+        While fire = true measurements are made every .15 seconds. For each measurement the functions called
+        and their order can be read in the flowchart below.
+    </p>
+
+    <h3>overview</h3>
+    <p>
+        getDetectionEvent samples a point from the probability distribution and returns an event containing
+        position x, y and a timestamp.
+    </p>
+    <p>
+        The event is passed on to getBackwardTrajectory which iteratively calls <a href="">velocityAt()</a> with x,y,t updating them
+        in each iteration. initial x is at screen (x=10), the loop works backward, updating time with -dt each iteration.
+        When x or y exceeds the limits of the screen the loop is broken and getBackwardTrajectory() returns a path
+        in the form of a string which can be directly inserted into a SVG element.
+    </p>
+    <p>
+        burst() calls stagger, passing the path as an argument along with the final Y value e.g. the y value of
+        the measurement at the screen, and the value of bohmian (true or false depending on user input, false by default).
+        If bohmian is false, stagger calls detectElectron, passing the final y value. If bohmian is true an SVG element
+        is created and animated. When the animation is 85% complete detectElectron is called, on completion the SVG element
+        is deleted from DOM and drawn to canvas instead by calling <a href="">drawPointsToCanvas()</a>.
+    </p>
+    <p>
+        stagger includes support for a more dramatic looking trajectory, to enable it initialize the iterator in the for 
+        loop to 0 instead of 4
+        <br>
+        // for (let i = 4; i < 5; i++ ) {
+        <br>
+        for (let i = 0; i < 5; i++ ) {
+        <br> on line {line#930}
+    </p>
+
+    <p>
+        detectElectron takes one argument (yPercent) and chooses a random x value (within the bounds of its parent element).
+        At this x,y pair it creates a &lt;div&gt; element and animates it to do a little flash to make it easier for 
+        the user to see where the new measurement was made. When the animation is finished the &lt;div&gt; element is 
+        deleted and a dot is drawn to canvas.
+    </p>
+
+    <div class="flowchart">
+        <div class="box">fireContinuously()</div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="group">
+            <div class="box">burst(1)</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">getDetectionEvent()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">getBackward<br>Trajectory()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">velocityAt()</div>
+        </div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="box">stagger(path)</div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="box">detectElectron()</div>
+    </div>
+</section>

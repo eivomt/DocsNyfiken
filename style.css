@@ -1,0 +1,49 @@
+#sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    padding: 1rem;
+    border-left: 1px solid #ccc;
+    background: #111;
+    color: white;
+    overflow-y: auto;
+}
+
+#content {
+    margin-left: 290px;
+    padding: 2rem;
+}
+
+#sidebar button {
+    display: block;
+    width: 100%;
+    background: none;
+    color: inherit;
+    border: none;
+    text-align: left;
+    padding: 0.35rem 0;
+    cursor: pointer;
+}
+
+.submenu {
+    display: none;
+    margin-left: 1rem;
+    border-left: 1px solid #444;
+    padding-left: 0.75rem;
+}
+
+.submenu.open {
+    display: block;
+}
+
+.nested {
+    margin-left: 1.25rem;
+}
+
+math-field {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}

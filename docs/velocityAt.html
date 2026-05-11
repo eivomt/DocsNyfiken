@@ -1,0 +1,83 @@
+<section>
+    <h1>velocityAt()</h1>
+
+    <p>
+       <pre>
+        function velocityAt(x, y, t, d, sigma, k0, eps = 1e-4, vmax = 1000, vscale = 1000) {
+
+            const p = psiAndGradAt(x, y, t, d, sigma, k0);
+
+            const denom = p.re * p.re + p.im * p.im + eps;
+
+            let vx = (p.dxIm * p.re - p.dxRe * p.im) / denom;
+            let vy = (p.dyIm * p.re - p.dyRe * p.im) / denom;
+
+            return compressVelocity(vx, vy);
+        }
+        </pre>
+    </p>
+
+    <h3>overview</h3>
+    <p>
+        velocityAt() returns the velocity of a particle at a point x,y. the functions called and their order can be
+        read in the flowchart below.
+    </p>
+    <p>
+        velocityAt() is given a point x,y and a timestamp t, it passes this on to psiAndGradAt() (along with some global
+        variables). psiAndGradAt() calls slitContribution() (once for each slit) which returns the value of psi and its 
+        derivative at the given x,y,t using Psi defined as:
+        <math-field
+            id="mf"
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]"
+        >
+            \Psi(x,y,t)=\exp\left(-\frac{(r-vt)^2}{2\sigma^2}\right)e^{i(kr-\omega t)},\qquad r=\sqrt{(x-x_0)^2+(y-y_0)^2}
+        </math-field>
+        <br>
+        (a radially expanding gaussian wavepacket)
+        <br>
+        psiAndGradAt() then adds the contribution from the two slits and returns the real and imaginary component of 
+        PsiTotal (p1 + p2) as well as the real and imaginary component of the derivative of PsiTotal with respect to
+        x and y.
+    </p>
+
+    <p>
+        velocityAt() then calculates the velocity at the given point using the equation: <br>
+        <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]"
+        >
+            \mathbf{v}=\operatorname{Im}\left(\frac{\nabla\Psi}{\Psi}\right)
+        </math-field> 
+    </p>
+
+    <p>
+        That velocity is then passed to compressVelocity which ensures velocity doesn't explode where Psi approaches 0.
+        It does so by sending the velocity through a hyperbolic tangent function, producing a smooth cap to velocity. that
+        cap is set by changing vmax. vscale changes how quickly the cap is reached (see how it works 
+        <a href="https://www.desmos.com/calculator/ata7ygrfgi" target="_blank">here</a>, s=vscale, m=vmax).
+    </p>
+
+    <p>
+        velocityAt() includes its own protection from divisionByZero errors. Regardless of the value of psi it adds
+        an epsilon (eps=1e-4 by default) so that the denominator is always greater than 0.
+    </p>
+
+    <div class="flowchart">
+        <div class="box">velocityAt()</div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="group">
+            <div class="box">psiAndGradAt()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">slitContribution()</div>
+        </div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="box">compressVelocity()</div>
+    </div>
+</section>

@@ -1,0 +1,44 @@
+<section>
+    <h1>drawPointsToCanvas()</h1>
+
+    <p>
+       <pre>
+        let drawPointsToCanvas = (ctx, points, {
+            stroke = 'fff',
+            strokeWidth = 1,
+            opacity = 1,
+            blur = 0
+            }) => {
+            if(!points.length) return
+
+            ctx.save()
+            ctx.globalAlpha = opacity
+            ctx.strokeStyle = stroke
+            ctx.lineWidth = strokeWidth
+            ctx.lineCap = 'round'
+            ctx.lineJoin = 'round'
+
+            if (blur > 0) {
+                ctx.shadowBlur = blur
+                ctx.shadowColor = stroke
+            }
+
+            ctx.beginPath()
+            ctx.moveTo(points[0].x, points[0].y)
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y)
+            }
+            ctx.stroke()
+            ctx.restore()
+        }
+        </pre>
+    </p>
+
+    <h3>overview</h3>
+    <p>
+        drawPointsToCanvas() takes three arguments ctx (canvas drawing context), points (points along the trajectory) and
+        an object containing visual parameters, as long as we're only drawing the one line with no added blur effects you 
+        can disregard these. The function creates a path, while there are more points to draw it moves to the next point 
+        and draws a line from the previous point.
+    </p>
+</section>

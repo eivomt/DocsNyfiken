@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokumentasjon</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="flow.css">
+
+    <script defer src="https://unpkg.com/mathlive"></script>
+</head>
+<body>
+
+
+    <div id="content">
+        <h1>docs: Nyfiken.cs.oslomet.no</h1>
+    </div>
+
+
+
+    <aside id="sidebar">
+
+        <button class="nav-item" data-target="energies" data-page="docs/energies.html">
+            Bound states
+        </button>
+        <button class="nav-item" data-target="double-slit" data-page="docs/double-slit.html">
+            DoubleSlit
+        </button>
+
+        <div class="submenu" id="double-slit">
+            <button data-page="docs/figure1.html">figure 1</button>
+            <button data-page="docs/figure2.html">figure 2</button>
+            <button data-page="docs/figure3.html">figure 3</button>
+
+            <button class="nav-item" data-target="diagram" data-page="docs/onLoad.html">diagram</button>
+
+            <div class="submenu" id="diagram">
+                <button data-page="docs/onLoad.html">onLoad</button>
+
+                <button data-page="docs/redraw.html">redraw()</button>
+            </div>
+
+            <button class="nav-item" data-target="measurement" data-page="docs/measurement.html">
+                measurement
+            </button>
+
+            <div class="submenu" id="measurement">
+                <button data-page="docs/velocityAt.html">velocityAt()</button>
+
+
+                <button data-page="docs/drawPointsToCanvas.html">
+                    drawPointsToCanvas()
+                </button>
+            </div>
+
+            <!-- <button class="nav-item" data-target="bohmian" data-page="docs/bohmian.html">
+                bohmian trajectories
+            </button>
+
+            <div class="submenu" id="bohmian">
+                <button data-page="docs/velocityAt.html">velocityAt()</button>
+
+                <div class="submenu nested">
+                    <button data-page="docs/drawPointsToCanvas.html">compressVelocity()</button>
+                </div>
+
+                <button data-page="docs/getBackwardTrajectory.html">
+                    getBackwardTrajectory()
+                </button>
+            </div> -->
+        </div>
+
+        <button class="nav-item" data-target="Uncertainty" data-page="docs/uncertainty.html">
+            Uncertainty principle
+        </button>
+
+        <button class="nav-item" data-target="Scattering" data-page="docs/scattering.html">
+            Scattering
+        </button>
+
+        <button class="nav-item" data-target="Entanglement" data-page="docs/Entanglement.html">
+            Entanglement
+        </button>
+
+        <button class="nav-item" data-target="Interference" data-page="docs/Interference.html">
+            Interference
+        </button>
+
+        <button class="nav-item" data-target="Spectrum" data-page="docs/Spectrum.html">
+            Line spectrum
+        </button>
+
+        <button class="nav-item" data-target="Adiabatic" data-page="docs/Adiabatic.html">
+            Adiabatic
+        </button>
+
+        <button class="nav-item" data-target="Potential" data-page="docs/Potential.html">
+            Potential
+        </button>
+    </aside>
+
+    
+    
+</body>
+<script src="sidebar.js"></script>
+</html>

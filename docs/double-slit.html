@@ -1,0 +1,93 @@
+<section>
+    <h1>Double slit</h1>
+    <p> 
+        This script approximates the double slit experiment. It does so by
+        defining two radially emitted gaussian wave packets. Adding these two together
+        and normalizing gives a probability distribution in space and time for where one
+        might find an electron (or some other particle) given the wave function.
+
+        The visualization itself has two parts, one on the left showing the wave function
+        diagrammatically and one on the right which can be set with user input to show;
+        
+
+        <br>
+        <h2>Figures</h2>
+
+        <h3>figure 1</h3>
+        Time dependent wave function at x=10. Here the x-axis represents time, while
+        y is spatial. The figure shows a probability distribution in time for measuring
+        a particle at the screen located at x=10 given by 
+        <span>boundaryFlux(x, y, t, d, sigma, k0, edge)</span>
+
+        <h3>figure 2</h3>
+        Time independent wave function at x=10. This is essentially the average of
+        figure 1. The x-axis has no real meaning, the function takes y as input and
+        will gives the same output for any x value at the same y. This figure also
+        includes a graph which shows the same data as the colormap, where magnitude
+        shows psi squared (probability of measurement) at y in some given timespan.
+
+        <h3>figure 3</h3>
+        Accumulation of measurements, this shows what you would see if you repeated
+        the experiment over and over, each time measuring the particles position and
+        displaying that position as a little dot on a screen analogous to 
+        <a href="https://www.youtube.com/watch?v=pVK67lNfgeE">the Hitachi
+        experiment</a> (which it attempts to be visually similar to). With enough measurements 
+        interference fringes will eventually become apparent.
+
+        <br>
+        <h2>Diagram</h2>
+
+        <h3>diagram</h3>
+        The left side shows the experimental setup diagrammatically. We have incoming planar
+        waves, hitting a barrier with two slits, which results in circular waves being emitted
+        from each of the slits. Only wave-peaks are drawn, signified by a faint line. The white
+        lines represent the barrier (drawn as SVG lines) and the screen to the right (drawn with CSS)
+        The diagram is completely static unless input variables are changed by the user.
+
+        <h3>bohmian trajectories</h3>
+        If toggled, bohmian trajectories will be superimposed on the diagram to show the path the 
+        particle must have taken, given the time and position of a measurement, according to bohmian
+        mechanics. Trajectories are computed with the equation v = Im(nablaPsi / Psi), slightly simplified
+        by setting all constants to be equal to one. In the script, get velocity at a point x,y by calling
+        velocityAt(x, y, t, d, sigma, k0, eps = 1e-4, vmax = 1000, vscale = 1000).
+
+        Trajectories are computed backwards from a detection event chosen randomly from the probability
+        distribution. This ensures the end position of the trajectories reflect the actual expected distribution
+        for the experimental setup with the variables set to whatever they're set to.
+        
+        <h2>GUI</h2>
+
+        <h3>variable sliders</h3>
+        Sliders allow the user to change lambda (wavelength) and d (distance between slits). The
+        diagram is updated on input, each time a slider reports to have changed its value redraw()
+        is called (a potential performance bottleneck) whereas figures are only updated on change.
+        Meaning that the figures will only be updated when the user 'releases' the slider.
+
+        <h3>play</h3>
+        Sets fire to true, while fire is true the script makes a measurement every 0.15 seconds, it also changes
+        display="block" for an svg of the stop symbol (and "none" for play). while fire is false no measurements are made, no bohmian
+        trajectories will be drawn and no measurements will be accumulating in figure 3, perhaps not optimal in 
+        terms of user experience.
+
+        <h3>b</h3>
+        Toggles bohmian trajectories on or off, drawn trajectories will leave a trace which is removed only when
+        input parameters are changed (lambda, d).
+
+        <h3>figure buttons</h3>
+        These select which figure is currently active. Figures 1 and 2 live in the same canvas element and are 
+        redrawn every time. Figure 3 however has its own element and accumulates measurements even when figure 
+        3 is inactive.
+
+        <h2>Global variables</h2>
+        These are initially hardcoded, some are never changed (slitWidth, sigma, dt, L) while others are updated 
+        by various functions in the script. <br>
+        They are; <br>
+
+        d = 2.5 <br>
+        slitWidth = d/5 (=.5) //the width of the hole itself <br>
+        sigma = 2.525 //the width of the incoming gaussian wave packet <br>
+        k0 = 6 //the script uses wavenumber instead of wavelength for computational reasons (k = 1/lambda) <br>
+        dt = 1e-2 //the size of each timestep <br>
+        L = 10 //distance from barrier to screen
+    </p>
+</section>

@@ -1,0 +1,105 @@
+<section>
+    <h1>On load</h1>
+
+    <p>
+        The functions shown in the flowchart below are called in that order, when the page is loaded or refreshed.
+    </p>
+
+    <h3>overview</h3>
+
+    <p>
+        resizeCanvas() sets the width and height of the canvas to match the width and height of the window. 
+        drawStaticDiagram() then draws the circular waves as SVG circles. it does this by calculating a maximum 
+        radius. <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">r_{\max}=\sqrt{\left(\frac{h}{2}-\frac{d}{2}\right)^2+L^2}</math-field>
+        <br>
+        where; <br>
+        h = window.innerHeight, <br>
+        d = distance between slits <br>
+        L = distance from barrier to screen <br><br>
+        Glossing over some unit conversion, it then runs a for loop where radius = lambda, and each iteration radius += 
+        lambda, until radius >= maxRadius. Each iteration it creates two new SVG circle elements centered at each of the slits and appends them to
+        <br>
+        &lt;svg id=&quot;staticDiagram&quot;&gt;&lt;/svg&gt;.
+    </p>
+
+    <p>
+        coverLeft() then creates a rectangle which is laid on top of &lt;svg id=&quot;staticDiagram&quot;&gt;&lt;/svg&gt; to 
+        hide the left half of the circular wave peaks.
+    </p>
+
+    <p>
+        drawBarrier() takes two arguments, d and slitWidth and draws the barrier accordingly by creating three SVG lines. 
+        Start and end points for these are given by: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        y_c=\frac{h}{2},\quad
+        g=\frac{d}{2},\quad
+        s=\frac{w}{2}
+        </math-field>
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        y_{\mathrm{top}}^{(1)}=y_c-g-s,\quad
+        y_{\mathrm{bottom}}^{(1)}=y_c-g+s
+        </math-field>
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        y_{\mathrm{top}}^{(2)}=y_c+g-s,\quad
+        y_{\mathrm{bottom}}^{(2)}=y_c+g+s
+        </math-field>
+        <br>
+        Here
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">y_c</math-field>
+        denotes the vertical center of the window,
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">g</math-field>
+        half the distance between the slit centers,
+
+        and
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">s</math-field>
+        half the slit width.
+    </p>
+
+    <pre>
+        const x = window.innerHeight / 2
+        const centerY = window.innerHeight / 2
+
+        const halfGap = inPixels(d / 2)
+        const halfSlit = inPixels(slitWidth / 2)
+
+        const topSlitTop = centerY - halfGap - halfSlit
+        const topSlitBottom = centerY - halfGap + halfSlit
+
+        const bottomSlitTop = centerY + halfGap - halfSlit
+        const bottomSlitBottom = centerY + halfGap + halfSlit
+    </pre>
+    <p>
+        Note that the helper function inPixels(x) has L = 10 hardcoded into itself, changing L is not trivial as this is 
+        not the only function which presupposes L = 10. Fixing this is still on the to-do list.
+    </p>
+
+    <p>
+        drawPlaneWaves() does essentially the same as drawStaticDiagram did for the circular wave peaks except for creating 
+        SVG line elements instead of circles, and places these on top of the rectangle created by coverLeft()
+    </p>
+
+    <p>
+        At last renderFig2() is called, making figure 2 the default active figure.
+    </p>
+
+    <div class="flowchart">
+        <div class="group">
+            <div class="box">resizeCanvas()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">drawStaticDiagram()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">coverLeft()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">drawBarrier()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">drawPlaneWaves()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">renderFig2()</div>
+        </div>
+    </div>
+</section>
