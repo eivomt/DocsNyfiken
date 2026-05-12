@@ -12,7 +12,7 @@
         position x, y and a timestamp.
     </p>
     <p>
-        The event is passed on to getBackwardTrajectory which iteratively calls <a href="">velocityAt()</a> with x,y,t updating them
+        The event is passed on to getBackwardTrajectory which iteratively calls <a class="nav-link" href="docs/DoubleSlit/velocityAt.html">velocityAt()</a> with x,y,t updating them
         in each iteration. initial x is at screen (x=10), the loop works backward, updating time with -dt each iteration.
         When x or y exceeds the limits of the screen the loop is broken and getBackwardTrajectory() returns a path
         in the form of a string which can be directly inserted into a SVG element.
@@ -22,7 +22,7 @@
         the measurement at the screen, and the value of bohmian (true or false depending on user input, false by default).
         If bohmian is false, stagger calls detectElectron, passing the final y value. If bohmian is true an SVG element
         is created and animated. When the animation is 85% complete detectElectron is called, on completion the SVG element
-        is deleted from DOM and drawn to canvas instead by calling <a href="">drawPointsToCanvas()</a>.
+        is deleted from DOM and drawn to canvas instead by calling <a class="nav-link" href="docs/DoubleSlit/drawPointsToCanvas.html">drawPointsToCanvas()</a>.
     </p>
     <p>
         stagger includes support for a more dramatic looking trajectory, to enable it initialize the iterator in the for 

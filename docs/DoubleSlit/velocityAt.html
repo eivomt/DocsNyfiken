@@ -25,7 +25,7 @@
     <p>
         velocityAt() is given a point x,y and a timestamp t, it passes this on to psiAndGradAt() (along with some global
         variables). psiAndGradAt() calls slitContribution() (once for each slit) which returns the value of psi and its 
-        derivative at the given x,y,t using Psi defined as:
+        derivative at the given x,y,t using Psi defined as: <br>
         <math-field
             id="mf"
             read-only
@@ -36,6 +36,7 @@
         </math-field>
         <br>
         (a radially expanding gaussian wavepacket)
+        <br>
         <br>
         psiAndGradAt() then adds the contribution from the two slits and returns the real and imaginary component of 
         PsiTotal (p1 + p2) as well as the real and imaginary component of the derivative of PsiTotal with respect to

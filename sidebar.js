@@ -13,3 +13,18 @@ document.querySelectorAll("[data-page]").forEach(button => {
     });
 });
 
+document.addEventListener("click", async (event) => {
+
+    const link = event.target.closest(".nav-link");
+
+    if (!link) return;
+
+    event.preventDefault();
+
+    const file = link.getAttribute("href");
+
+    const response = await fetch(file);
+    const html = await response.text();
+
+    document.getElementById("content").innerHTML = html;
+});
