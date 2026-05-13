@@ -52,25 +52,9 @@
                     drawPointsToCanvas()
                 </button>
             </div>
-
-            <!-- <button class="nav-item" data-target="bohmian" data-page="docs/bohmian.html">
-                bohmian trajectories
-            </button>
-
-            <div class="submenu" id="bohmian">
-                <button data-page="docs/velocityAt.html">velocityAt()</button>
-
-                <div class="submenu nested">
-                    <button data-page="docs/drawPointsToCanvas.html">compressVelocity()</button>
-                </div>
-
-                <button data-page="docs/getBackwardTrajectory.html">
-                    getBackwardTrajectory()
-                </button>
-            </div> -->
         </div>
 
-        <button class="nav-item" data-target="Uncertainty" data-page="docs/uncertainty.html">
+        <button class="nav-item" data-target="Uncertainty" data-page="docs/Uncertainty/uncertainty.html">
             Uncertainty principle
         </button>
 
@@ -90,9 +74,21 @@
             Line spectrum
         </button>
 
-        <button class="nav-item" data-target="Adiabatic" data-page="docs/Adiabatic.html">
+        <button class="nav-item" data-target="Adiabatic" data-page="docs/Adiabatic/Adiabatic.html">
             Adiabatic
         </button>
+
+        <div class="submenu" id="Adiabatic">
+            <button class="nav-item" data-target="split-operator" data-page="docs/Adiabatic/splitOperator.html">split operator method</button>
+            
+            <div class="submenu" id="split-operator">
+                <button data-page="docs/Adiabatic/step.html">step()</button>
+                
+                <button data-page="docs/Adiabatic/unitaryStep.html">unitaryStep()</button>
+            </div>
+
+            <button class="nav-item" data-target="split-operator" data-page="docs/Adiabatic/absorber.html">absorber</button>
+        </div>
 
         <button class="nav-item" data-target="Potential" data-page="docs/Potential.html">
             Potential
