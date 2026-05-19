@@ -1,3 +1,86 @@
 <section>
     <h1>step()</h1>
+
+    <p>
+        For reasons which are, frankly, beyond me, evolving the wave function in imaginary time has the effect of <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]">
+            \psi
+        </math-field> converging on its ground state. Confusing, but very useful. Since the particles mass is a dynamic variable 
+        set by user input, we cannot simply hard code the ground state. Whenever mass is changed we run <b>step()</b> until the 
+        wavefunction has converged close enough to the new ground state, before we activate 'normal' time evolution in 
+        <b>unitaryStep()</b>
+    </p>
+
+    <h3>evolve in imaginary time</h3>
+    <pre>
+        const PsiC1 = tf.complex(PsiRe, PsiIm);
+
+        const PsiK  = tf.spectral.fft(PsiC1);
+        const KR = tf.real(PsiK);
+        const KI = tf.imag(PsiK);
+
+        const kineticHalfFactor = tf.exp(k.square()<b>.mul(-(dTau / (4*mass))));</b>
+        const PsiK2 = tf.complex(KR.mul(kineticHalfFactor), KI.mul(kineticHalfFactor));
+        const PsiX1 = tf.spectral.ifft(PsiK2);
+
+        const Psi1Re = tf.real(PsiX1);
+        const Psi1Im = tf.imag(PsiX1);
+
+
+        const xShift = x.sub(tf.scalar(delta, 'float32'));
+        const gauss = tf.exp(tf.scalar(-1.0 / (2.0 * sigma * sigma), 'float32').mul(xShift.square()));
+        const potentialWell = tf.scalar(-V0, 'float32').mul(gauss);
+        const potentialFactor = tf.exp(potentialWell.mul(tf.scalar(-dTau, 'float32')));
+
+        const PsiMidRe = Psi1Re.mul(potentialFactor);
+        const PsiMidIm = Psi1Im.mul(potentialFactor);
+
+        const PsiK3 = tf.spectral.fft(tf.complex(PsiMidRe, PsiMidIm));
+        const KR2 = tf.real(PsiK3); // KineticReal2
+        const KI2 = tf.imag(PsiK3); // KineticImaginary2
+
+        const PsiC2 = tf.complex(KR2.mul(kineticHalfFactor), KI2.mul(kineticHalfFactor));
+        const PsiX2 = tf.spectral.ifft(PsiC2);
+
+        let newPsiRe = tf.real(PsiX2);
+        let newPsiIm = tf.imag(PsiX2);
+    </pre>
+
+    <h3>get delta psi</h3>
+    <p>
+        for every value (separated by dx) in the x-axis, add the difference between psi before and after imaginary time evolution. 
+        Store the sum in variable, difference.
+    </p>
+    <pre><code>
+        let difference = 0
+        for (let i=0; i&lt;realPrevious.length; i++) {
+            const deltaPsiReal = realCurrent[i] - realPrevious[i]
+            const deltaPsiImaginary = imaginaryCurrent[i] - imaginaryPrevious[i]
+            difference += deltaPsiReal**2 + deltaPsiImaginary**2
+        }
+    </code></pre>
+
+    <h3>if delta psi &lt; threshold break</h3>
+    <p>
+        Check whether difference between last time step and current is small enough (difference being the sum described above, 
+        small enough defined by epsilon, set as 1e-6 in {line #22})
+    </p>
+    <pre>
+        if(difference &lt; epsilon) {
+            groundStateFound = true
+            reappear()
+        }
+    </pre>
+
+    <h3>swap <b>step()</b> / <b>unitaryStep()</b></h3>
+    <p>
+        in <b>async function frame()</b> {line#765} we check if we have found the groundState. If we have, we evolve in time with 
+        <b>unitaryStep()</b>, if not, we run imaginary time evolution again. Whenever mass is changed, groundStateFound is set to 
+        false.
+    </p>
+    <pre>
+        const result = groundStateFound ? unitaryStep() : step();
+    </pre>
 </section>

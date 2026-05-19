@@ -1,3 +1,126 @@
 <section>
     <h1>unitaryStep()</h1>
+
+    <p>
+        <b>unitaryStep()</b> takes no arguments, it uses and makes changes to global variables, and returns <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]">
+            \psi(t+dt)
+        </math-field>, along with some tensors used for the draw pass. <br>
+        The meat of this function is an implementation of the split operator method, since this is shared
+        between unitaryStep() and step(), this has a 
+        <a class="nav-link" href="/docs/Adiabatic/splitOperator.html">separate explanation</a>.
+    </p>
+
+    <pre>
+        .
+        .
+        .
+        // ====== VISUALIZATION (V and |Ψ|²) ====== 
+        const prob = tf.add(tf.square(newPsiRe), tf.square(newPsiIm)); 
+
+        const farDist = Math.max( 
+            Math.abs(-L/2 - delta), 
+            Math.abs(L/2 - delta) 
+        ); 
+
+        const Vref = Math.max(1e-6, 0.5 * Kmax * farDist * farDist); 
+
+        const probInWell = tf.add( 
+            potentialWell, 
+            tf.mul(prob, tf.scalar(0.5 * Vref, 'float32')) 
+        ); 
+
+        const redNorm = tf.div(probInWell, tf.scalar(Vref, 'float32')); 
+        const blueNorm = tf.div(potentialWell, tf.scalar(Vref, 'float32')); 
+
+        const one = tf.scalar(1, 'float32') 
+        const norm = newPsiRe.square().add(newPsiIm.square()).sum().mul(dx) 
+        const scale = tf.where(norm.greater(one), tf.rsqrt(norm), one) 
+
+        const reScaled = newPsiRe.mul(scale) 
+        const imScaled = newPsiIm.mul(scale) 
+
+        newPsiRe.dispose() 
+        newPsiIm.dispose() 
+        newPsiRe = reScaled 
+        newPsiIm = imScaled 
+
+        // These 4 tensors are kept alive outside tidy when returned: 
+        return { newPsiRe, newPsiIm, redNorm, blueNorm }; 
+    }); 
+    </pre>
+
+    <h3>preparing the wavefunction for visualization</h3>
+
+    <p>
+        The rest of the function, as can be read above gets <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]">
+            |\psi|^2
+        </math-field> but does not return it 'raw'. Adding probInWell to <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]">
+            |\psi|^2
+        </math-field> is what makes the visualization show a wavefunction 'in' the potential well. The potential and
+        the wave function strictly speaking do not live in the same coordinate system. The y-axis for the potential shows 
+        energy, whereas the y-axis for <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]">
+            |\psi|^2
+        </math-field> is a probability amplitude. An argument could be made that a wave function sloshing about in a well 
+        is a misleading picture of the underlying dynamics. Another argument could be made which goes something like, who cares,
+        this looks and feels better, and I tend to agree with the latter. <br> <br>
+        So the top half of the snippet above is a conceptually misleading massage of the wave function, and the rest is 
+        a hack covering up for a bug we never found the cause of. Not our finest moment, i'll admit. <br> <br>
+        The bug in question; each time step we noticed a small but, given enough iterations, not unnoticeable growth in the total 
+        amplitude of the wavefunction. If we were to take that result seriously it would mean the probability of finding the particle
+        at some point on screen is greater than 1. Disaster! We fix this by renormalizing if the total probability > 1. We do not 
+        renormalize if the total probability is less than 1, since that is allowed by the 
+        <a class="nav-link" href="docs/absorber.html">absorber</a>.
+    </p>
+
+    <h3>separation, visualization / computation</h3>
+
+    <p>
+        <b>unitaryStep()</b> returns <br><br>
+        <pre>
+            { newPsiRe, newPsiIm, redNorm, blueNorm }
+        </pre>
+        redNorm, blueNorm are then used to draw the wave function and potential well respectively, which is done in the following
+        way: <br>
+        <pre>
+            ctx.strokeStyle = '#FC4120'
+            ctx.lineWidth = 3
+            let redRegion = new Path2D()
+            for (let i = 0; i < M; i++) {
+                const j = i + xCrop
+                const xpix = (i / (M - 1)) * W
+                const ypix = (0.5 - 0.25 * probArr[j]) * H * state.scalingFactor * state.scalingFactor
+                if (i === 0) {
+                    redRegion.moveTo(canvas.width, canvas.height)
+                    redRegion.lineTo(0, canvas.height)
+                    redRegion.lineTo(xpix, ypix)
+                } else {
+                    redRegion.lineTo(xpix, ypix)
+                }
+            }
+            redRegion.closePath();
+            ctx.fillStyle = "#FC4120"
+            ctx.fill(redRegion, "evenodd")
+            ctx.stroke()
+        </pre>
+        At {line #848} in script.js, long story short, this draws a line from each point in an array of points to the next. Followed 
+        by its equivalent for the potential well. Multiplying by state.scalingFactor is a relic
+        of a previous version where the wave function would go to zero and back when finding the ground state. In the current state 
+        of the simulation, this has no effect (* 1). (unnecessary operation, should probably be removed)
+        <br> <br>
+        newPsiRe and newPsiIm, tensors without the massage mentioned above, then set the values of psiRe and psiIm (and are
+        <a class="nav-link" href="docs/Adiabatic/disposingTensors.html">disposed</a>) so that, the 
+        next time <b>unitaryStep()</b> or <b>step()</b> run, they access the new values.
+    </p>
 </section>

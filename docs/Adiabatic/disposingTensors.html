@@ -1,0 +1,12 @@
+<section>
+    <h1>disposing tensors</h1>
+    <p>
+        In TensorFlow.js, the dispose() function is used to manually release memory held by tensors, layers, and models. 
+        Because TF.js often runs on WebGL in the browser, it manages memory that the JavaScript garbage collector cannot see; 
+        failing to dispose of objects can lead to severe memory leaks and application crashes. <br> <br>
+    
+        TF.js also provides tf.tidy(), which automatically cleans up intermediate tensors created inside a function scope. Any 
+        tensors not returned from the tf.tidy() callback are disposed automatically, making it useful for preventing leaks during 
+        repeated computations.
+    </p>
+</section>
