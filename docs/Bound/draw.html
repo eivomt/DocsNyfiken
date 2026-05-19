@@ -1,0 +1,145 @@
+<section>
+    <h1>Draw</h1>
+    
+    <p>
+        <b>function draw()</b> is called 60 times per second by default.
+    </p>
+
+    <ul>
+        <li>psiTotal</li>
+        <li>collapsed</li>
+        <li>collapseTo</li>
+        <li>resizeMeasurements()</li>
+        <li>measurement.dataset</li>
+        <li>if collapsed{}else{}</li>
+    </ul>
+
+    <br><br><br>
+    <pre>
+        function draw() {
+            let sliderInputs = []
+
+            for(let i=0; i &lt;EigValues.length; i++) {
+                sliderInputs.push(document.getElementById("E" + (i+1).toString()))
+            }
+
+            recalculateProbabilities(sliderInputs)
+
+
+            if(paused==false) {
+                let bgColor = color('#F1F1F1')
+                background(bgColor)
+                translate(-512 + windowWidth/2, windowHeight/2 + 4*windowHeight/32)
+
+
+                drawingContext.setLineDash([1,4])
+                strokeWeight(2)
+                stroke(255,255,255)
+                for(let i = 0; i&lt;EigValues.length; i++){
+                    line(0,-30*EigValues[i], 512*2,-30*EigValues[i])
+                }
+
+                
+
+                strokeWeight(2)
+            
+                drawingContext.setLineDash([1])
+                stroke(32,115,232)
+                // stroke('#333')
+                beginShape()
+                for(let i = 0; i&lt;potential.length; i++) {
+                    vertex(i*2, -potential[i])
+                }
+                endShape()
+
+                drawingContext.setLineDash([1])
+                stroke(252,65,32)
+                
+                noFill()
+                strokeWeight(3)
+                beginShape()
+                for(let i = 0; i< psiTotal.length; i++) {
+                    vertex(i*2,-psiTotal[i])
+                }
+                endShape()
+            
+
+                
+
+                t += .04
+                psiTotal = []
+                totalReal = []
+                totalImaginary = []
+            
+                
+                
+                // reverse loop 
+                for(let i=0; i < EigVectorsReal.length; i++) {
+                    temporaryReal = 0
+                    temporaryImaginary = 0
+
+                    
+            
+                    if(collapsed) { 
+                        if(collapseTo) {
+
+                            if(burst) {
+                                for (let i = 0; i < 4; i ++) {
+                                    let iterator = 0
+                                    energy = Math.random()
+                                    while (energy > amplitudePositions[iterator]) {
+                                        iterator++
+                                    }
+                                    energy = iterator
+
+                                    let measurements = document.querySelectorAll(".measurement")
+
+                                    measurements[energy].dataset.measurements = ((parseInt(measurements[energy].dataset.measurements)) + 1).toString()
+                                    resizeMeasurements(measurements)
+                                }
+                                burst = false
+                            }
+
+                            let iterator = 0
+                            energy = Math.random()
+                            while (energy > amplitudePositions[iterator]) {
+                                iterator++
+                            }
+                            energy = iterator
+
+                            const energyLevelID = `lE${energy}`
+                            gsap.to(`#${energyLevelID}`, {x: -20, duration: .25})
+                            gsap.to(`#${energyLevelID}`, {scale: 2.5, duration: .25, delay: .25})
+                            gsap.to(`#${energyLevelID}`, {scale: 1, duration: .35, delay: 1.5})
+                            gsap.to(`#${energyLevelID}`, {x: 0, duration: .25, delay: 1.75})
+
+                            let measurements = document.querySelectorAll(".measurement")
+
+                            measurements[energy].dataset.measurements = ((parseInt(measurements[energy].dataset.measurements)) + 1).toString()
+
+                            resizeMeasurements(measurements)
+                            collapseTo = false
+                        }
+                        // pause loop
+                        temporaryReal += (Math.cos(EigValues[energy]*t) * EigVectorsReal[i][energy] - Math.sin(EigValues[energy]*t)*EigVectorsImaginary[i][energy])
+                        temporaryImaginary += (Math.cos( EigValues[energy]*t) * EigVectorsImaginary[i][energy] + Math.sin(EigValues[energy]*t)*EigVectorsReal[i][energy])
+                    } else { 
+                        for(let j=0; j&lt;EigValues.length; j++) {
+                            // * initial coefficients?
+                            temporaryReal += (Math.cos(EigValues[j]*t) * EigVectorsReal[i][j] - Math.sin(EigValues[j]*t)*EigVectorsImaginary[i][j]) * amplitudeArray[j]
+                            temporaryImaginary += (Math.cos( EigValues[j]*t) * EigVectorsImaginary[i][j] + Math.sin(EigValues[j]*t)*EigVectorsReal[i][j]) * amplitudeArray[j]
+                        }
+                    }
+                    totalReal.push(temporaryReal)
+                    totalImaginary.push(temporaryImaginary)
+            
+                    if(collapsed) {
+                        psiTotal.push((((amplitudeScalar/EigValues.length)*temporaryReal**2) + (amplitudeScalar/EigValues.length)*temporaryImaginary**2) + EigValues[energy] * 30)
+                    } else {
+                        psiTotal.push((amplitudeScalar*temporaryReal**2) + amplitudeScalar*temporaryImaginary**2)
+                    }
+                }
+            }
+        }
+    </pre>
+</section>

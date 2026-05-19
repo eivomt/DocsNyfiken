@@ -1,0 +1,43 @@
+<section>
+    <h1>Bound states</h1>
+
+    <p>
+        A visualization of a wavefunction defined as a superposition of the allowed bound states of a potential well, evolving in 
+        time. Users can interact with the visualization by setting the probability of each bound state and by making a measurement, 
+        at which point the wavefunction collapses into one of the, in this case 6, allowed states. Each measurement made is stored 
+        and shown in a GUI element, visually identical to the probability control, the educational point being that, although 
+        it is impossible to predict what state a wave function in a superposition will collapse to, as the number of
+        measurements increases, the distribution of measurements will converge on the probability distribution set by the user. The 
+        option is also provided, to make 5 measurements at once. Added to make arriving at a measurement distribution which reflects 
+        the probability distribution less tiresome, once the point of collapsing into a single state has been made.
+        <br><br>
+        Here the plots are made with p5js, and so uses a conventional p5js flow. <b>function setup()</b> is run once and initializes 
+        the canvas, while <b>function draw()</b> is run every frame and updates the plot continuously.
+    </p>
+
+     <h3>
+        dependencies:
+    </h3>
+    
+    <ul>
+        <li>jquery</li>
+        <li>gsap</li>
+        <li>p5js</li>
+        <li>ajax</li>
+        <li>mathlive</li>
+    </ul>
+
+    <h3>
+        list of visual elements:
+    </h3>
+
+    <h4>mathematical expression</h4>
+    <h4>potential well</h4>
+    <h4>wave function</h4>
+    <h4>Allowed states indicators</h4>
+    <h4>probability distribution</h4>
+    <h4>measurement distribution</h4>
+    <h4>play / measure</h4>
+    <h4>reset</h4>
+    <h4>5x</h4>
+</section>

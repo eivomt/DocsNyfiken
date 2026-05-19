@@ -1,0 +1,126 @@
+<section>
+    <h1>Setup</h1>
+
+    <p>
+        In <b>setup()</b> the canvas is initialized and all csv files are read and stored as javascript arrays to be used later. Note 
+        that setup waits .3 seconds before plotting, to allow the asynchronous AJAX functions to finish. Fetching and storing those 
+        values can take longer, depending on hardware and probably a whole bunch of other factors I'm blissfully oblivious to. If the 
+        timed out plotting runs before AJAX is finished the plots will remain empty, in which case you'll need to do a hard refresh 
+        of the page. This could use a rewrite.
+    </p>
+    <pre>
+        function setup() {
+            createCanvas(windowWidth, windowHeight)
+            background(30)
+            $(document).ready(function () {
+
+                    // setTimeout(() => {
+                    
+                        // Use AJAX to load the CSV file content
+                        $.ajax({
+                            url: './Eigvalues.csv',
+                            dataType: 'text',
+                            success: function (data) {
+                                // Parse the CSV content into objects
+                                let EigvaluesObject = $.csv.toObjects(data);
+                                for(let i = 0; i&lt;Object.keys(EigvaluesObject).length; i++) {
+                                    EigValues.push(EigvaluesObject[i].Eigvalue)
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Failed to load the CSV file:", error);
+                            }
+                        });
+
+                        $.ajax({
+                            url: './EigvectorsReal.csv',
+                            dataType: 'text',
+                            success: function (data) {
+                                // Parse the CSV content into objects
+                                let EigVectorsRealObject = $.csv.toObjects(data);
+                                let tempArray = []
+                                for(let i = 0; i&lt;Object.keys(EigVectorsRealObject).length; i++) {
+                                    tempArray =[]
+                                    tempArray.push(EigVectorsRealObject[i].e0)
+                                    tempArray.push(EigVectorsRealObject[i].e1)
+                                    tempArray.push(EigVectorsRealObject[i].e2)
+                                    tempArray.push(EigVectorsRealObject[i].e3)
+                                    tempArray.push(EigVectorsRealObject[i].e4)
+                                    tempArray.push(EigVectorsRealObject[i].e5)
+                                    EigVectorsReal.push(tempArray)
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Failed to load the CSV file:", error);
+                            }
+                        });
+
+                        $.ajax({
+                            url: './EigvectorsImaginary.csv',
+                            dataType: 'text',
+                            success: function (data) {
+                                // Parse the CSV content into objects
+                                let EigVectorsImaginaryObject = $.csv.toObjects(data);
+                                let tempArray = []
+                                for(let i = 0; i&lt;Object.keys(EigVectorsImaginaryObject).length; i++) {
+                                    tempArray =[]
+                                    tempArray.push(EigVectorsImaginaryObject[i].e0)
+                                    tempArray.push(EigVectorsImaginaryObject[i].e1)
+                                    tempArray.push(EigVectorsImaginaryObject[i].e2)
+                                    tempArray.push(EigVectorsImaginaryObject[i].e3)
+                                    tempArray.push(EigVectorsImaginaryObject[i].e4)
+                                    tempArray.push(EigVectorsImaginaryObject[i].e5)
+                                    EigVectorsImaginary.push(tempArray)
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Failed to load the CSV file:", error);
+                            }
+                        });
+
+                        $.ajax({
+                            url: './Vpot.csv',
+                            dataType: 'text',
+                            success: function (data) {
+                                // Parse the CSV content into objects
+                                let potentialObject = $.csv.toObjects(data);
+                                for(let i = 0; i&lt;Object.keys(potentialObject).length; i++) {
+                                    potential.push(potentialObject[i].potential * 30)
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Failed to load the CSV file:", error);
+                            }
+                        });
+
+                });
+
+
+                setTimeout(() => {
+                    console.log(potential)
+
+                    psiTotal = []
+                    totalImaginary = []
+                    totalReal = []
+                    let temporaryReal
+                    let temporaryImaginary
+
+                    for(let i=0; i < EigVectorsReal.length; i++) {
+                        temporaryReal = 0
+                        temporaryImaginary = 0
+
+                        for(let j=0; j&lt;5; j++) {
+                            temporaryReal += Math.cos(EigValues[j]) * EigVectorsReal[i][j] - Math.sin(EigValues[j])*EigVectorsImaginary[i][j]
+                            temporaryImaginary += Math.cos(EigValues[j]) * EigVectorsImaginary[i][j] + Math.sin(EigValues[j])*EigVectorsReal[i][j]
+                        }
+
+                        totalReal.push(temporaryReal)
+                        totalImaginary.push(temporaryImaginary)
+
+                        psiTotal.push((amplitudeScalar*temporaryReal**2) + amplitudeScalar*temporaryImaginary**2)
+                    }
+
+                }, 300)
+        }
+    </pre>
+</section>

@@ -12,7 +12,7 @@
         would, quite literally, take forever to carry out. We fix this by introducing an absorber function, by convention named 
         Gamma, whose job it is to 'eat' the wave function as it approaches the end of its little world. Each time step every y-value 
         of the wavefunction (separated by dx) is subtracted the value of Gamma <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]"">
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             \psi(x) \to \psi(x) - \Gamma(x)
         </math-field> <br>
         Gamma could be any function of x, in this implementation we've used a piecewise second degree polynomial, multiplied

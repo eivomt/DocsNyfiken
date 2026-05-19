@@ -1,0 +1,68 @@
+<section>
+    <h1>Computing bound states</h1>
+
+    <figure>
+        <img src="docs/bound/statesOriginal.png" alt="" style="width: 60vw;">
+        <figcaption>wave functions of admissable bound energies for the potential well
+            <pre>
+                def Vpot(x):
+                    return V0/(np.exp(s*(np.abs(x)-w/2))+1.0)
+            </pre>
+        </figcaption>
+    </figure>
+
+    <p>
+        Energies.py is a barely modified version of <a href="https://github.com/CambridgeUniversityPress/A-Computational-Introduction-to-Quantum-Physics/blob/main/PythonCode/Chapter3_Time-indepdentSE/Exercise_3_1_2.py" target="_blank">
+            Excercise_3_1_2.py
+        </a>, a script from Sølve Selstø's book, A computational introduction to quantum physics. It returns the bound energies and
+        eigenstates for a given potential well. In energies.py these are written to csv files which are in turn read by javascript. 
+        The python script plays no active part in the interface and could be left out, but if you would like to change the potential 
+        well you would have to change it here and run the script to write new csv's. <br> <br>
+
+        the script writes four csv files, containing;
+        <ul>
+            <li>eigenvalues</li>
+            <li>eigenvectors imaginary part</li>
+            <li>eigenvectors real part</li>
+            <li>potential well</li>
+        </ul>
+    </p>
+
+    <h3>defining the well</h3>
+
+    <p>
+        If you would like to change the potential, play around with: <br>
+    </p>
+
+    <pre>
+        Input for the confining potential:
+            V0      - The "height", the the barrier (must be negative for a well)
+            w       - The width of the barrier
+            s       - Smoothness parameter, rectangular well for s -> infinity
+    </pre>
+
+    <p>
+        And run energies.py to generate new csv files. <br>
+        The current chosen parameters for the well are:
+        <pre>
+            # Physical parameters:
+            V0 = -4
+            s = 5
+            w = 6
+        </pre>
+        which gives <a href="https://www.desmos.com/calculator/mtvacrv6ln" target="_blank">this</a> function for the potential. 
+        A finite rectangular well, with smoothed edges. <br> 
+        Those parameters give 6 allowed bound energies and a slightly messier looking collection of wave functions for 
+        the energy eigenstates:
+    </p>
+    <figure>
+        <img src="docs/bound/statesAltered.png" alt="" style="width: 60vw;">
+        <!-- <figcaption>
+            plot of 
+            <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+                \operatorname{Re}(\Psi)
+            </math-field>
+        </figcaption> -->
+    </figure>
+    
+</section>
