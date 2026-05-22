@@ -1,0 +1,67 @@
+<section>
+    <h1>Quantum jumps</h1>
+
+    <p>
+        An undisturbed hydrogen atom will in theory stay in whatever state it's in forever. But if it's interacted with, it's state 
+        may change, either by receiving / absorbing energy thereby transitioning to a higher energy state, or by giving off energy 
+        (by firing a photon), transitioning to a lower energy state.
+        When a hydrogen atom transitions from a higher to a lower energy state, the energy released is a precise quantity equal to: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            E_\gamma = E_i - E_f = -13.6eV(\frac{1}{n_i^2} - \frac{1}{n_f^2})
+        </math-field> <br>
+        We can convert the energy <math-field read-only virtual-keyboard-mode="off" menu-items="[]">E_\gamma</math-field> to a wavelength 
+        according to the Planck formula, which says the energy of a photon is proportional to its frequency: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            E_\gamma = hv
+        </math-field> <br>
+        for electromagnetic waves, their speed is the speed of light and so the wavelength is:
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \lambda = \frac{c}{v}
+        </math-field> <br>
+        inserting this into our equation for <math-field read-only virtual-keyboard-mode="off" menu-items="[]">E_\gamma</math-field> 
+        we get: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \lambda = \frac{ch}{E_\gamma}
+        </math-field> <br>
+    </p>
+    <p>
+        So the possible wavelengths a hydrogen atom can emit are strictly the wavelengths that satisfy this equality. Although the 
+        possible wavelengths vary, the basic sentiment of quantized energies is true for all atoms, thereby giving us the 
+        fingerprints of the elements.
+    </p>
+    <h3>hydrogenSpectrum.py</h3>
+    <p>
+        The formula above is used to produce the wavelengths for all transitions from the 10th state and below, the upper 
+        bound can be set by changing <br>
+        <pre>
+            # Maximum quantum number n
+            nMax = 10
+        </pre> <br>
+        in line {L#18}. <br>
+        In the for loop {L#37 - L#47} the wavelengths are calculated: <br>
+        <pre>
+            # Wavelength of emitted photon - in nanometres
+            LambdaNM = h*c/(B*(1/n2**2-1/n1**2))/1e-9
+        </pre> <br>
+        and printed to the terminal. There is no automatic link to javascript, these values I simply copy pasted into line.js and 
+        ordered them in one array for each state transitioned from, in descending order internally in each array ({L#4 - L#12}, line.js).
+        <br>
+        <pre>
+            const fra2 = [121.71]
+            const fra3 = [657.22, 102.69]
+            const fra4 = [1877.77, 486.83, 97.37]
+            const fra5 = [4056.91, 1283.63, 434.67, 95.08]
+            const fra6 = [7468.40, 2628.88, 1095.36, 410.76, 93.89]
+            const fra7 = [12386.05, 4659.10, 2168.60, 1006.37, 397.58, 93.18]
+            const fra8 = [19083.69, 7511.07, 3744.84, 1947.32, 955.95, 389.46, 92.73]
+            const fra9  = [27835.15, 11321.62, 5914.97, 3300.76, 1819.99, 924.21, 384.09, 92.42]
+            const fra10 = [38914.28, 16227.63, 8770.08, 5134.52, 3042.68, 1738.67, 902.77, 380.34, 92.20]
+        </pre> <br>
+        (read const *from2 =)
+        <br> <br>
+        These are then collected in an array of arrays, waveLengthArray.
+        <pre>
+            const waveLengthArray = [fra2, fra3, fra4, fra5, fra6, fra7, fra8, fra9, fra10]
+        </pre> <br>
+    </p>
+</section>

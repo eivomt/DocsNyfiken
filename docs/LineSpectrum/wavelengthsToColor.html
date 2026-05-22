@@ -1,0 +1,141 @@
+<section>
+    <h1>From wavelengths to colors</h1>
+    <h5>hydrogen.js</h5>
+
+    <p>
+        html, css, javascript unfortunately do not think of colors as different wavelengths of light but as combinations of red, 
+        green and blue (the same goes for us, to be fair to the computer). Having 
+        <a class="nav-link" href="docs/LineSpectrum/quantumJumps.html">defined our wavelengths</a> we now have to convert 
+        them to colors a computer can comprehend and display.
+    </p> <br>
+    <h3>like so - ferraverto</h3>
+    <pre>
+        function wavelengthToRGB(lambda) {
+            let R=0, G=0, B=0;
+
+            if (lambda >= 380 && lambda < 440) { R = -(lambda - 440) / (440 - 380); G = 0; B = 1; }
+            else if (lambda >= 440 && lambda < 490) { R = 0; G = (lambda - 440) / (490 - 440); B = 1; }
+            else if (lambda >= 490 && lambda < 510) { R = 0; G = 1; B = -(lambda - 510) / (510 - 490); }
+            else if (lambda >= 510 && lambda < 580) { R = (lambda - 510) / (580 - 510); G = 1; B = 0; }
+            else if (lambda >= 580 && lambda < 645) { R = 1; G = -(lambda - 645) / (645 - 580); B = 0; }
+            else if (lambda >= 645 && lambda <= 780) { R = 1; G = 0; B = 0; }
+            else { R = G = B = 0; } // out of range = black
+
+            // Intensity factor near vision limits
+            let S = 1;
+            if (lambda > 700) {
+                S = 0.3 + 0.7 * (780 - lambda) / (780 - 700);
+            } else if (lambda < 420) {
+                S = 0.3 + 0.7 * (lambda - 380) / (420 - 380);
+            }
+
+            // Gamma correction
+            const gamma = 0.8;
+            const to8bit = v => Math.round(255 * Math.pow(v * S, gamma));
+
+            return {
+                r: to8bit(Math.max(0, Math.min(1, R))),
+                g: to8bit(Math.max(0, Math.min(1, G))),
+                b: to8bit(Math.max(0, Math.min(1, B))),
+            };
+        }
+    </pre>
+    <p>
+        We could go into the details here, but let's not. Very good, we have a way to return a RGB color from any wavelength, surely 
+        we're good to go, but no, with great vanity comes unnecessary additional tasks. Obviously we want the lines to be nice and 
+        glowy. To achieve this RGB is not ideal, what we need is the same color in different intensities, or said in another way, we 
+        want to vary the brightness of the color while its hue and saturation remains constant.
+    </p>
+    <h3>RGB to HSL</h3>
+    <p>
+        RGB expresses a color in three values; Red, Green and Blue. HSL expresses it with three values as well, but instead of red, 
+        green and blue it expresses them in terms of Hue, Saturation and Lightness. What luck, we really should convert our RGB 
+        color code to HSL:
+    </p>
+    <pre>
+        function RGBToHSL(r,g,b) {
+            r/=255; g/=255; b/=255;
+            const cmin=Math.min(r,g,b), cmax=Math.max(r,g,b), delta=cmax-cmin;
+            let h=0, s=0, l=(cmax+cmin)/2;
+            if (delta !== 0) {
+                if (cmax === r) h = ((g-b)/delta) % 6;
+                else if (cmax === g) h = (b-r)/delta + 2;
+                else h = (r-g)/delta + 4;
+                h = Math.round(h*60); if (h&lt;0) h+=360;
+                s = delta === 0 ? 0 : delta / (1 - Math.abs(2*l - 1));
+            }
+            return { h, s: +(s*100).toFixed(1), l: +(l*100).toFixed(1) };
+        }
+    </pre>
+    <p>
+        With a HSL code in hand all we need to do now is vary L to get different intensities of the same color:
+    </p>
+    <pre>
+        function makeTripletFromHSL({h, s, l}) {
+            const clamp = v => Math.max(0, Math.min(100, v));
+            const outer = `hsl(${h} ${s}% ${clamp(l - 15)}%)`;
+            const mid   = `hsl(${h} ${s}% ${clamp(l)}%)`;
+            const inner = `hsl(${h} ${s}% ${clamp(l + 25)}%)`;
+            return { outer, mid, inner };
+        }
+    </pre>
+
+    <h3>creating and displaying spectral lines</h3>
+    <p>
+        Visible light ranges from ca. 380 - 780 nm. This spectrum represented in the user interface as a black bar to be filled 
+        with spectral lines. When we create a new line of some color corresponding to a wavelength in the Balmer series 
+        (transitions to n=2), we want to place that line in its correct position relative to the other colors in the spectrum of 
+        visible light. To do this we map it's wavelength as a number between 380 and 780 to a percentage which is then set as it's 
+        top value (relative to it's parent container, '#spectra').
+    </p>
+    <pre>
+        function nmToPercent(nm){
+            const min = 380, max = 780;
+            return 100 - ((nm - min) / (max - min)) * 100;   // percentage of container height
+        }
+    </pre>
+    <p>
+        Finally we have everything we need to create and place a spectral line on screen:
+    </p>
+    <pre>
+        function addSpectralLine(container, triplet, nm) {
+            const line = document.createElement('div');
+            line.className = 'spectral-line';
+            line.style.setProperty('--outer', triplet.outer);
+            line.style.setProperty('--mid',   triplet.mid);
+            line.style.setProperty('--inner', triplet.inner);
+
+            line.style.top = nmToPercent(nm) + '%';    // place within the container
+
+            const mid = document.createElement('div');
+            mid.className = 'spectral-mid';
+            const inner = document.createElement('div');
+            inner.className = 'spectral-inner';
+            mid.appendChild(inner);
+            line.appendChild(mid);
+            line.classList.add('hidden')
+
+            container.appendChild(line);
+        }
+    </pre>
+
+        <div class="flowchart">
+            <div class="box">waveLength<br>ToRGB(nm)</div>
+        
+            <div class="arrow">→</div>
+        
+            <div class="box">RGBTo<br>HSL(r,g,b)</div>
+
+            <div class="arrow">→</div>
+        
+            <div class="box">makeTriplet<br>FromHSL(hsl)</div>
+
+            <div class="arrow">→</div>
+
+            <div class="group">
+                <div class="box">addSpectral<br>Line(root, triplet, nm)</div>
+                <div class="down-arrow">↓</div>
+                <div class="box">nmToPercent(nm)</div>
+            </div>
+        </div>
+</section>
