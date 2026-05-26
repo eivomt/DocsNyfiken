@@ -12,67 +12,6 @@
             explained below.
     </p>
 
-    <pre>
-        function unitaryStep() { 
-            // one full time step of the wavefunction + visualization tensors 
-            return tf.tidy(() => { 
-                // ====== HALF KINETIC STEP ====== 
-                const PsiC1 = tf.complex(PsiRe, PsiIm); 
-                const PsiK  = tf.spectral.fft(PsiC1); 
-                const KR = tf.real(PsiK); 
-                const KI = tf.imag(PsiK); 
-                const kMul = cmul(KR, KI, cosK, sinK); 
-
-                const PsiK2 = tf.complex(kMul.re, kMul.im); 
-
-                const PsiX1 = tf.spectral.ifft(PsiK2); 
-
-                let Psi1Re = tf.real(PsiX1); 
-                let Psi1Im = tf.imag(PsiX1); 
-
-                // ====== POTENTIAL + ABSORPTION FULL STEP ====== 
-                const absorb = tf.exp(tf.mul(tf.scalar(-dt, 'float32'), GammaX)); 
-                const xShift = tf.sub(x, tf.scalar(delta, 'float32')); 
-
-                const gauss = tf.exp(tf.scalar(-1.0 / (2.0 * sigma * sigma), 'float32').mul(xShift.square()))
-                const potentialWell = tf.scalar(-V0, 'float32').mul(gauss)
-                const potentialFactor = tf.exp(potentialWell.mul(tf.scalar(-dt, 'float32')))
-                
-                const phase = potentialWell.mul(tf.scalar(dt, 'float32')); // V * dt
-                const cosV = tf.cos(phase);
-                const sinV = tf.sin(phase).neg(); // exp(-iVdt) = cos(Vdt) - i sin(Vdt)
-
-                const psi1C = tf.complex(Psi1Re, Psi1Im);
-                const phaseC = tf.complex(cosV, sinV);
-                const xMul = psi1C.mul(phaseC);
-
-                const xMulReAbs = tf.mul(tf.real(xMul), absorb); 
-                const xMulImAbs = tf.mul(tf.imag(xMul), absorb); 
-
-
-                // ====== SECOND HALF KINETIC STEP ====== 
-                const PsiC2in = tf.complex(xMulReAbs, xMulImAbs); 
-
-                const PsiK3 = tf.spectral.fft(PsiC2in); 
-
-                const KR2 = tf.real(PsiK3); 
-                const KI2 = tf.imag(PsiK3); 
-
-                const kMul2 = cmul(KR2, KI2, cosK, sinK); 
-
-                const PsiC2 = tf.complex(kMul2.re, kMul2.im); 
-
-                const PsiX2 = tf.spectral.ifft(PsiC2); 
-
-                let newPsiRe = tf.real(PsiX2); 
-                let newPsiIm = tf.imag(PsiX2);
-                .
-                .
-                .
-
-                return { newPsiRe, newPsiIm, redNorm, blueNorm }; 
-    </pre>
-
     <h3>time evolution</h3>
     <p>
         The time dependent Schrödinger equation: <br> <math-field
@@ -81,10 +20,20 @@
             menu-items="[]">i\hbar\frac{\partial \psi}{\partial t}=\frac{\hbar^2}{2m}\frac{\partial^2 \psi}{\partial x^2} + V\psi</math-field> <br>
         can be written in terms of the Hamiltonian <math-field read-only
             virtual-keyboard-mode="off"
-            menu-items="[]"">\hat{H}</math-field> which is the sum of the kinetic and potential energy operators 
+            menu-items="[]"">\hat{H}</math-field> which is the sum of the kinetic and potential energy operators <br> 
             <math-field read-only
             virtual-keyboard-mode="off"
             menu-items="[]"">\hat{H} = \hat{T} + \hat{V}</math-field>. <br>
+            <i>
+                (in our case the 
+                potential is time dependent, since it can be moved, so <math-field 
+                read-only
+                virtual-keyboard-mode="off"
+                menu-items="[]">V(x)</math-field> should strictly speaking be <math-field 
+                read-only
+                virtual-keyboard-mode="off"
+                menu-items="[]">V(x, t)</math-field>) <br>
+            </i>
         The time dependent Schrödinger equation then becomes: <br> <math-field
             read-only
             virtual-keyboard-mode="off"
@@ -102,13 +51,17 @@
             virtual-keyboard-mode="off"
             menu-items="[]">
         \frac{\partial \psi}{\partial t}=-\frac{i}{\hbar}(\hat{T} + \hat{V})\psi</math-field> <br>
-        an expression for how psi changes in time, excactly what we need to update the wave function each 
+        an expression for how <math-field
+            read-only
+            virtual-keyboard-mode="off"
+            menu-items="[]">
+        \psi</math-field> changes in time, excactly what we need to update the wave function each 
         timestep, and the expression has the solution: <br>
         <math-field
             read-only
             virtual-keyboard-mode="off"
             menu-items="[]">
-            \psi(t+dt)=e^{-i(\hat{T}+\hat{V})dt/\hbar}\psi(t)
+            \psi(t+\Delta t)\approx e^{-i(\hat{T}+\hat{V})\Delta t/\hbar}\psi(t)
         </math-field>. <br>
         Since 
         <math-field
@@ -121,20 +74,20 @@
             read-only
             virtual-keyboard-mode="off"
             menu-items="[]">
-            e^{-i(\hat{T}+\hat{V})dt/\hbar}\psi(t) = e^{-i(\hat{T})dt/\hbar} \; e^{-i(\hat{V})dt/\hbar}\psi(t)
+            e^{-i(\hat{T}+\hat{V})\Delta t/\hbar}\psi(t) = e^{-i(\hat{T})\Delta t/\hbar} \; e^{-i(\hat{V})\Delta t/\hbar}\psi(t)
         </math-field>. <br>
         The potential and kinetic operators however, generally do not commute. This equality therefore, is not excact, so we 
         approximate the solution using the split-operator method <br>
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            e^{-i(\hat{T}+\hat{V})dt/\hbar}
+            e^{-i(\hat{T}+\hat{V})\Delta t/\hbar}
             \approx
-            e^{-i\hat{T}dt/(2\hbar)}
-            e^{-i\hat{V}dt/\hbar}
-            e^{-i\hat{T}dt/(2\hbar)}
+            e^{-i\hat{T}\Delta t/(2\hbar)}
+            e^{-i\hat{V}\Delta t/\hbar}
+            e^{-i\hat{T}\Delta t/(2\hbar)}
         </math-field>. <br>
         which has global error of order <br>
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            dt^2
+            \Delta t^2
         </math-field>. <br>
         In our case we simplify the world just a little bit by setting 
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
@@ -142,11 +95,11 @@
         </math-field> so we are left with: <br> <br>
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]"
             style="font-size: larger;">
-            \psi(t+dt)
+            \psi(t+\Delta t)
             \approx
-            e^{-i\hat{T}dt/2}
-            e^{-i\hat{V}dt}
-            e^{-i\hat{T}dt/2}
+            e^{-i\hat{T}\Delta t/2}
+            e^{-i\hat{V}\Delta t}
+            e^{-i\hat{T}\Delta t/2}
             \;
             \psi(t)
         </math-field>. <br>
@@ -168,7 +121,7 @@
         </math-field>,
         that's just multiplication. <br>
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \psi(x) \to e^{-iV(x)\frac{dt}{\hbar}} \; \psi(x)
+            \psi(x) \to e^{-iV(x)\frac{\Delta t}{\hbar}} \; \psi(x)
         </math-field> <br>
         The kinetic operator on the other hand 
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
@@ -239,4 +192,68 @@
             \psi(x,t) \to \psi(x,t + \Delta t)
         </math-field>
     </p>
+
+    <br>
+    <br>
+
+    <pre>
+        function unitaryStep() { 
+            // one full time step of the wavefunction + visualization tensors 
+            return tf.tidy(() => { 
+                // ====== HALF KINETIC STEP ====== 
+                const PsiC1 = tf.complex(PsiRe, PsiIm); 
+                const PsiK  = tf.spectral.fft(PsiC1); 
+                const KR = tf.real(PsiK); 
+                const KI = tf.imag(PsiK); 
+                const kMul = cmul(KR, KI, cosK, sinK); 
+
+                const PsiK2 = tf.complex(kMul.re, kMul.im); 
+
+                const PsiX1 = tf.spectral.ifft(PsiK2); 
+
+                let Psi1Re = tf.real(PsiX1); 
+                let Psi1Im = tf.imag(PsiX1); 
+
+                // ====== POTENTIAL + ABSORPTION FULL STEP ====== 
+                const absorb = tf.exp(tf.mul(tf.scalar(-dt, 'float32'), GammaX)); 
+                const xShift = tf.sub(x, tf.scalar(delta, 'float32')); 
+
+                const gauss = tf.exp(tf.scalar(-1.0 / (2.0 * sigma * sigma), 'float32').mul(xShift.square()))
+                const potentialWell = tf.scalar(-V0, 'float32').mul(gauss)
+                const potentialFactor = tf.exp(potentialWell.mul(tf.scalar(-dt, 'float32')))
+                
+                const phase = potentialWell.mul(tf.scalar(dt, 'float32')); // V * dt
+                const cosV = tf.cos(phase);
+                const sinV = tf.sin(phase).neg(); // exp(-iVdt) = cos(Vdt) - i sin(Vdt)
+
+                const psi1C = tf.complex(Psi1Re, Psi1Im);
+                const phaseC = tf.complex(cosV, sinV);
+                const xMul = psi1C.mul(phaseC);
+
+                const xMulReAbs = tf.mul(tf.real(xMul), absorb); 
+                const xMulImAbs = tf.mul(tf.imag(xMul), absorb); 
+
+
+                // ====== SECOND HALF KINETIC STEP ====== 
+                const PsiC2in = tf.complex(xMulReAbs, xMulImAbs); 
+
+                const PsiK3 = tf.spectral.fft(PsiC2in); 
+
+                const KR2 = tf.real(PsiK3); 
+                const KI2 = tf.imag(PsiK3); 
+
+                const kMul2 = cmul(KR2, KI2, cosK, sinK); 
+
+                const PsiC2 = tf.complex(kMul2.re, kMul2.im); 
+
+                const PsiX2 = tf.spectral.ifft(PsiC2); 
+
+                let newPsiRe = tf.real(PsiX2); 
+                let newPsiIm = tf.imag(PsiX2);
+                .
+                .
+                .
+
+                return { newPsiRe, newPsiIm, redNorm, blueNorm }; 
+    </pre>
 </section>
