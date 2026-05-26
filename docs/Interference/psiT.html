@@ -1,0 +1,136 @@
+<section>
+    <h1>psiT()</h1>
+
+    <p>
+        psiT() returns the value of a free particle Gaussian wavepacket 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \Psi(x,t)
+        </math-field>
+        at position 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            x
+        </math-field>
+        and time 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            t
+        </math-field>.
+        The wavepacket is initialized with momentum 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            p_0
+        </math-field>
+        and spatial standard deviation 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field>.
+        <br>
+        The function implements the analytic solution to the free particle Schrödinger equation:
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            i\frac{\partial \Psi}{\partial t}
+            =
+            -\frac{1}{2}\frac{\partial^2 \Psi}{\partial x^2}
+        </math-field>
+        where we once again simplify the world slightly by setting
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \hbar = 1
+        </math-field>
+        and
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            m = 1
+        </math-field>.
+        <br>
+        The returned wavefunction is:
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \Psi(x,t)
+            =
+            \frac{1}
+            {
+                \left(2\pi\sigma_x^2\right)^{1/4}
+                \sqrt{1+i\frac{t}{2\sigma_x^2}}
+            }
+            \;
+            \exp
+            \left(
+                -\frac{(x-p_0t)^2}
+                {4\sigma_x^2\left(1+i\frac{t}{2\sigma_x^2}\right)}
+            \right)
+            \exp(ip_0x)
+            \exp\left(-i\frac{p_0^2}{2}t\right)
+        </math-field>.
+
+        <br>
+        The first exponential term defines the Gaussian envelope of the packet. 
+        Since the packet moves with velocity 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            p_0
+        </math-field>,
+        the center of the Gaussian shifts according to
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            x \to x - p_0 t
+        </math-field>.
+
+        <br>
+        The factor
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \exp(ip_0x)
+        </math-field>
+        gives the packet momentum and oscillatory phase structure, while
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \exp\left(-i\frac{p_0^2}{2}t\right)
+        </math-field>
+        is the global time evolution phase.
+        <br>
+        Unlike a classical particle, the packet also spreads in time. This spreading is encoded in the complex denominator
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            1+i\frac{t}{2\sigma_x^2}
+        </math-field>
+        which appears both in the normalization factor and the Gaussian exponent.
+        <br>
+        The implementation follows the expression almost directly:
+        <br> <br>
+        <pre>
+            function psiT(x, t, p0, sigmaX) {
+                let i = math.complex(0, 1);
+                let A = math.complex(math.sqrt(2 * Math.PI * sigmaX**2));
+                let B = math.multiply(2, math.pow(sigmaX, 2))
+                B = math.divide(t, B)
+                B = math.multiply(i, B)
+
+                let AB = math.add(A, math.multiply(A, B))
+                let norm = math.pow(AB, -0.5)
+
+                let denom = math.add(
+                    1,
+                    math.multiply(i, t / (2 * sigmaX**2))
+                );
+                let num = -1 * Math.pow(x - p0 * t, 2);
+                let exponent1 = math.divide(
+                    num,
+                    math.multiply(4 * sigmaX**2, denom)
+                );
+                let term1 = math.exp(exponent1);
+                let term2 = math.exp(
+                    math.multiply(i, p0 * x)
+                );
+                let term3 = math.exp(
+                    math.multiply(
+                        math.multiply(i, -1),
+                        math.divide(
+                            (math.multiply(math.pow(p0, 2), t)),
+                            2
+                        )
+                    )
+                );
+                let psi = math.multiply(
+                    norm,
+                    term1,
+                    term2,
+                    term3
+                );
+
+                return psi;
+            }
+        </pre>
+    </p>
+</section>

@@ -1,0 +1,46 @@
+<section>
+    <h1>setup()</h1>
+
+    <p>
+        In setup we declare and set the value of the variables that define the script.
+        The size of the canvas and its background are set, and setup checks whether the window is in portrait or landscape and 
+        sets const horizontal to true or false accordingly. This is only done once, the script includes no support for live 
+        resizing of the window. <br> <br>
+        variables are set:
+        <pre>
+            // Numerical inputs
+            L = 75
+            Nx = 3000
+            Nt = 200
+            tMax = 20
+            p1 = .9
+            slider.value = p1
+            p2 = 1 - p1
+        </pre> <br>
+        L is the length of the x-axis. <br>
+        Nx, steps along x-axis (resolution). <br>
+        p1 initial coefficient for <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi_1</math-field>. <br>
+        p1 sets the initial value of the slider and p2 indirectly.
+        <br> <br>
+        <pre>
+            // Physical inputs
+            x0 = -40
+            p01 = 1
+            sigmaP1 = .1
+            p02 = -1.25
+            sigmaP2 = 0.15
+            t = 0.0
+            dt = .2
+            tFinal = 100
+        </pre> <br>
+        x0, initial mean position of both wavepackets, x0 for <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \Psi_1
+        </math-field> and -x0 for <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi_2</math-field>. <br>
+        p01, p02 sets the momentum for <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi_1</math-field> and 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi_2</math-field> respectively. <br>
+        sigmaP1 and sigmaP2 does the same for their standard deviation. <br>
+        t, time initial value. <br>
+        dt, size of each timestep. <br>
+        tFinal, time at which the visualization loops (see <b><a class="nav-link" href="docs/Interference/draw.html">draw()</a></b>). <br>
+    </p>
+</section>

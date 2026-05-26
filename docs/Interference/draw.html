@@ -1,0 +1,76 @@
+<section>
+    <h1>draw()</h1>
+
+    <p>
+        draw is called every frame (60fps), as the name suggests it is responsible for drawing <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            |\Psi|^2
+        </math-field> and <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\operatorname{Re}\Psi</math-field>. To 
+        do so, each frame it sets <math-field read-only virtual-keyboard-mode="off" menu-items="[]"> t = t + \Delta t</math-field> 
+        and calls <b><a class="nav-link" href="docs/Interference/psiT.html">psiT()</a></b> with the new t along with the parameters set in 
+        setup (initial mean position, momentum, standard deviation) 
+        for <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi_1</math-field> and 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi_2</math-field> takes the sum and stores it in three 
+        arrays, PsiRe (real part), PsiIm (imaginary part), PsiSq (Psi squared). All of length Nx. <br>
+        It then draws this array by:
+        <pre>
+                beginShape();
+                stroke("#fdfdfd");
+                strokeWeight(4)
+                for (let x = -L / 2, i = 0; x <= L / 2; x += L / Nx, i++){
+                    horizontal ? point(x* scaleX,-1 *scaleY * psiRe[i] *.25) : point(-1 *scaleY * psiRe[i] * .25, x* scaleX)
+                }
+                endShape();
+        </pre>
+        to take <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\operatorname{Re}\Psi</math-field> as our example. 
+        Setting the color and the radius of each point. Then in a for loop it draws a point at 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">(0 + i \frac{L}{N_x}, PsiRe[i])</math-field> reversed if 
+        horizontal = true.
+    </p>
+
+    <h3>
+        reset
+    </h3>
+    <p>
+        draw first checks if the value in the slider is equal to the stored coefficient for 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \Psi_1
+        </math-field>, if it is not t is set to zero and the coefficients are updated.
+
+        <pre>
+            if (slider.value != p1) {
+                t = 0
+                p1 = slider.value
+                p2 = 1 - p1
+            }
+        </pre>
+    </p>
+
+    <h3>preparation</h3>
+
+    <p>
+        The canvas is then cleared, by filling it in rgb(230,230,230) if we don't do this the new graphs are drawn on top of the 
+        graphs of all previous frames. It then translates the entire canvas, by default (0,0) is the pixel in the top left, by 
+        calling translate(windowWidth / 2, windowHeight / 2) we move origo to the center of the canvas.
+        <br> <br>
+        <pre>
+            const scaleY = -1000 * 3;
+            const scaleX = 18
+        </pre>
+        <br> <br>
+        Are scalars we multiply the x and y values with to get values that makes sense in pixel space.
+    </p>
+
+    <h3>update time</h3>
+    <p>
+        lastly it checks if we've reached tFinal, in which case t is set to 0 and the animations starts over again. If not we iterate 
+        t += dt and translate origo back to the top left corner.
+
+        <pre>
+            t += dt;
+            if (t > tFinal) {
+                t=0
+            }
+            translate(-windowWidth / 2, -windowHeight / 2);
+        </pre>
+    </p>
+</section>
