@@ -1,4 +1,148 @@
 <section>
+    <h1>Super user</h1>
+
+    <h3>becomeSuper = () => {</h3>
+    
+    <p>
+        hide yo kids, hide yo wife. <br>
+        show and activate controls and list connected clients<br>
+        setInterval(updateUsers, 1000)
+    </p>
+
+    <pre>
+        becomeSuper = () => {
+            superUser = true
+            // header = document.getElementById("header")
+            // header.innerHTML = "CTRL-Room"
+            svgs = document.querySelectorAll("svg")
+            svgs.forEach(svg => {
+                svg.style.display = "none"
+            })
+            document.querySelector(".controls").style.display = "flex"
+            document.querySelector(".coin-container").style.display = "none"
+            document.querySelector(".connected-clients").style.display = "block"
+
+            entangledSwitch = document.getElementById("entanglement-switch")
+            oppositeSwitch = document.getElementById("opposite-switch")
+            resetAllBtn = document.getElementById("reset-all")
+
+            if (socket && socket.readyState == WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: "super",
+                }))
+            }
+
+            entangledSwitch.addEventListener("change", function() {
+                if (socket && socket.readyState == WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: "entanglement-toggle",
+                    }))
+                }
+            })
+
+            oppositeSwitch.addEventListener("change", function() {
+                if (socket && socket.readyState == WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: "opposite-toggle",
+                    }))
+                }
+            })
+
+            resetAllBtn.addEventListener("click", function() {
+                if(socket && socket.readyState == WebSocket.OPEN) {
+                    socket.send(JSON.stringify({
+                        type: "reset-all"
+                    }))
+                }
+            })
+
+            setInterval(updateUsers, 1000)
+        }
+    </pre>
+
+    <h3>updateUsers()</h3>
+
+    <p>
+        every second the super user calls updateUsers(), which goes something like this:
+    </p>
+
+    <pre>
+        let updateUsers = () => {
+            if(socket && socket.readyState == WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: "request-id-list"
+                }))
+            }
+        }
+    </pre>
+
+    <p>
+        to which, the server goes: <br>
+        check out this list of people <br>
+        and client is like, nice, i'll ask again in a second. <br>
+        then goes on to add them to it's list in DOM and change their status <br>
+        white: still in superposition <br>
+        red: collapsed to 1 <br>
+        blue: collapsed to 0 <br>
+    </p>
+
+    <p>
+        how does the client do such a thing?
+    </p>
+    <pre>
+        let recievedID = (clients) => {
+            const table = document.querySelector('.connected-clients');
+
+            // const existingRows = table.querySelectorAll('tr:not(:first-child)');
+            const existingRows = table.querySelectorAll('tr');
+            existingRows.forEach(row => row.remove());
+
+            let group = 0
+            clients.forEach((client, index) => {
+                const tr = document.createElement('tr');
+
+                if(index%2==0) {
+                    group++
+                }
+
+                const tdId = document.createElement('td');
+                // tdId.textContent = `${index + 1}: ${client.id}`;
+                tdId.textContent = `${group}: ${client.id}`;
+                tdId.style.paddingLeft = '1rem';
+
+                const tdLed = document.createElement('td');
+                tdLed.classList.add('led-td');
+
+                const ledDiv = document.createElement('div');
+                ledDiv.classList.add('collapsed-led');
+
+                if (client.value === 'Superposition') {
+                    ledDiv.classList.add('ledW');
+                } else if (client.value === 0) {
+                    ledDiv.classList.add('ledB');
+                } else if (client.value === 1) {
+                    ledDiv.classList.add('ledR');
+                }
+
+                tdLed.appendChild(ledDiv);
+
+                // Append columns to row
+                tr.appendChild(tdId);
+                tr.appendChild(tdLed);
+
+                // Append row to table
+                table.appendChild(tr);
+            });
+
+            // Show table if hidden
+            table.style.display = 'table';
+        }
+    </pre>
+
+    <br>
+    <br>
+    <br>
+    <br>
     <pre>
         let socket
 

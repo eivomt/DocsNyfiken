@@ -20,4 +20,111 @@
             break
         </pre>
     </p>
+
+    <p>
+        some times server be like, do this, and client be like, ok. <br>
+        These are the things:
+
+        <pre>
+            switch (data.type) {
+                case 'state_init':
+                    entangled = data.entangled
+                    opposite = data.opposite
+
+                    document.getElementById("connectButton").style.display = "none"
+
+                    console.log('entangled = ' + entangled)
+                    console.log('opposite = ' + opposite)
+
+                    console.log('user id = ' + data.id)
+
+                    console.log('# of connected clients: ' + data.connected_clients)
+
+
+                    console.log(data.connected_clients)
+                    if (data.connected_clients == 0) {
+                        superUser = true
+                        becomeSuper()
+                    }
+                    break
+
+                case 'coin_clicked':
+                    console.log('data.value = ' + data.value)
+                    if (!superUser) {
+                        console.log('Measured first')
+                        console.log('Recieved: ' + data.value + ' from server')
+                        if (data.value === 1) {
+                            console.log('Displaying red')
+                            cutToRed()
+                        } else if (data.value === 0) {
+                            console.log('Displaying blue')
+                            cutToBlue()
+                        }
+                    }
+                break
+                
+                case 'entangled':
+                    entangled = !entangled
+                    console.log('State changed, Entangled = ' + entangled)
+                break
+
+                case 'opposite':
+                    opposite = !opposite
+                    console.log('State changed, opposite = ' + opposite)
+                break
+
+                case 'reset':
+                    cutToWhite()
+                    coin.addEventListener("click", sendCoinClick)
+
+                case 'recievedIDList':
+                    recievedID(data.clients)
+            }
+        </pre>
+    </p>
+
+    <h3>case: 'state_init'</h3>
+    <pre>
+        Server: such and such are the settings <br>
+        Client: fine <br>
+        Client: any1 else here? <br>
+        Sometimes Server: no <br>
+            Client: meWhenBaeHomeAlone.jpg <br>
+        Sometimes Server: yes <br>
+            Client: fine <br>
+    </pre>
+
+    <h3>case: 'coin_clicked'</h3>
+    <pre>
+        Server: you red <br>
+        Client: me red <br>
+        Client: baeHomeAlone.jpg? <br>
+        Server: no <br>
+        Client: me red <br>
+    </pre>
+
+    <h3>case: 'entangled'</h3>
+    <pre>
+        Server: entangled is true
+        Client: yes
+    </pre>
+    
+    <h3>case: 'opposite'</h3>
+    <pre>
+        Server: opposite is true
+        Client: yes
+    </pre>
+
+    <h3>case: 'reset'</h3>
+    <pre>
+        Server: these are not the droids you are looking for
+        Client:
+        Client: whats this coin do
+    </pre>
+
+    <h3>case: 'recievedIDList'</h3>
+    <pre>
+        Server: these are connected
+        Client: I will remember this
+    </pre>
 </section>
