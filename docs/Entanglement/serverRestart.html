@@ -1,0 +1,46 @@
+<section>
+    <h1>server restart</h1>
+
+    <p>
+        If the server is down you'll have to restart the process. <br>
+        connect via ssh and navigate to /home/ubuntu. <br>
+        /home/ubuntu should be your working directory when you connect, you can make sure by running pwd
+
+        <pre>
+            ubuntu@nyfiken:~$ pwd
+                /home/ubuntu
+        </pre>
+
+        from run tmux
+
+        <pre>
+            ubuntu@nyfiken:~$ tmux
+        </pre>
+
+        you will get a new terminal you can detach from, inside activate the environment and run the server:
+
+        <pre>
+            source ~/wsenv/bin/activate
+            python server.py
+        </pre>
+
+        detach by presing
+
+        <pre>
+            Ctrl+b then d
+        </pre>
+
+        you can reconnect later by running 
+
+        <pre>
+            ubuntu@nyfiken:~$ tmux attach
+        </pre>
+
+        All print commands prints to this session. <br>
+        or stop the session by running
+
+        <pre>
+            ubuntu@nyfiken:~$ tmux kill-session
+        </pre>
+    </p>
+</section>
