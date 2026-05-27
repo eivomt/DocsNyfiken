@@ -23,7 +23,8 @@
         Users are paired in two's so that the measurement of one user is entangled only to whomever was paired up with them 
         initially. The pairs are made chronologically, a user is paired with the next one to connect or the previous depending 
         on the number of already connected clients (odd / even). If a user is not connected to another, collapse is disallowed. 
-        The number preceding user id's in the list of connected clients represents what pair the user belongs to.
+        The number preceding user id's in the list of connected clients represents what pair the user belongs to, more on this 
+        further down.
     </p>
 
     <figure>
@@ -34,9 +35,10 @@
     <h3>becomeSuper = () => {</h3>
     
     <p>
-        hide yo kids, hide yo wife. <br>
-        show and activate controls and list connected clients<br>
-        setInterval(updateUsers, 1000)
+        superUser is set to true, all svg's are removed (display set to none) and super user controls are shown. These are 
+        in DOM for all users, just not visible and they have no eventListeners until <b>becomeSuper</b> is called <br>
+        setInterval(updateUsers, 1000) makes the superUser call <b>updateUsers()</b> every 1000 milliseconds, which asks the 
+        server to send back a list of all users along with their status.
     </p>
 
     <pre>
