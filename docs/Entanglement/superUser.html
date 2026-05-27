@@ -23,8 +23,7 @@
         Users are paired in two's so that the measurement of one user is entangled only to whomever was paired up with them 
         initially. The pairs are made chronologically, a user is paired with the next one to connect or the previous depending 
         on the number of already connected clients (odd / even). If a user is not connected to another, collapse is disallowed. 
-        The number preceding user id's in the list of connected clients represents what pair the user belongs to, more on this 
-        further down.
+        The number preceding user id's in the list of connected clients represents what pair the user belongs to.
     </p>
 
     <figure>
@@ -36,9 +35,9 @@
     
     <p>
         superUser is set to true, all svg's are removed (display set to none) and super user controls are shown. These are 
-        in DOM for all users, just not visible and they have no eventListeners until <b>becomeSuper</b> is called <br>
+        in DOM for all users, just not visible and they have no eventListeners until <b>becomeSuper()</b> is called <br>
         setInterval(updateUsers, 1000) makes the superUser call <b>updateUsers()</b> every 1000 milliseconds, which asks the 
-        server to send back a list of all users along with their status.
+        server to send back a list of all users along with their status, more on this further down.
     </p>
 
     <pre>
@@ -94,10 +93,6 @@
 
     <h3>updateUsers()</h3>
 
-    <p>
-        every second the super user calls updateUsers(), which goes something like this:
-    </p>
-
     <pre>
         let updateUsers = () => {
             if(socket && socket.readyState == WebSocket.OPEN) {
@@ -109,18 +104,30 @@
     </pre>
 
     <p>
-        to which, the server goes: <br>
-        check out this list of people <br>
-        and client is like, nice, i'll ask again in a second. <br>
-        then goes on to add them to it's list in DOM and change their status <br>
-        white: still in superposition <br>
-        red: collapsed to 1 <br>
-        blue: collapsed to 0 <br>
+        when the server gets a message of type 'request-id-list' the following block runs:
     </p>
 
+    <pre>
+        if data.get("type") == "request-id-list":
+            sender_id = connected_clients[websocket]["id"]
+            client_list = []
+            for client_ws, client_info in connected_clients.items():
+                if client_info["id"] == sender_id:
+                    continue
+                value = collapsed_values.get(client_info["id"], "Superposition")
+                client_list.append({"id": client_info["id"], "value": value})
+            await websocket.send(json.dumps({
+                "type": "recievedIDList",
+                "clients": client_list
+        }))
+    </pre>
+
     <p>
-        how does the client do such a thing?
+        which returns an array of hashmaps containing the id of all connected clients (except the superuser) along with their 
+        values (0 for blue, 1 for red). If a user has not yet collapsed into a definite state value is returned as a string 
+        "Superposition". Handling this information and converting it to UI elements is done in <b>recievedID()</b>.
     </p>
+
     <pre>
         let recievedID = (clients) => {
             const table = document.querySelector('.connected-clients');
