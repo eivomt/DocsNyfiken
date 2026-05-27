@@ -19,6 +19,18 @@
         <figcaption>UI, list of connected clients</figcaption>
     </figure>
 
+    <p>
+        Users are paired in two's so that the measurement of one user is entangled only to whomever was paired up with them 
+        initially. The pairs are made chronologically, a user is paired with the next one to connect or the previous depending 
+        on the number of already connected clients (odd / even). If a user is not connected to another, collapse is disallowed. 
+        The number preceding user id's in the list of connected clients represents what pair the user belongs to.
+    </p>
+
+    <figure>
+        <img src="/docs/Entanglement/2collapsed.png" style="width: 60vw;" alt="">
+        <figcaption>an odd number of users means one is 'inactive'</figcaption>
+    </figure>
+
     <h3>becomeSuper = () => {</h3>
     
     <p>
