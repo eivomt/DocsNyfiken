@@ -1,0 +1,70 @@
+<section>
+    <h1>Uncertainty</h1>
+
+    <p>
+        have you ever applied a film to a surface and found theres a little air bubble in it so you try and press it down and it 
+        works so you're real happy before you notice the air bubble just appeared somewhere else. That's pretty much the 
+        uncertainty principle, there will always be an air bubble.
+    </p>
+
+    <p>
+        A visualization of Heisenbergs uncertainty principle showing the effect of the narrowing of knowledge of an observable 
+        on the knowledge of its complementary observable. In this case the chosen pair of complementary observables are 
+        position and momentum, a true classic. 
+    </p>
+
+    <p>
+        Both properties cannot be known simultaneously: <br> <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]" style="font-size: x-large;">
+            \sigma_x \sigma_p \geq \frac{\hbar}{2}
+        </math-field>
+        <!-- hit men ikke lenger -->
+    </p>
+
+    <p>
+        Users can change the mean value of position and momentum and set <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field>, resulting in the respective graphs moving 
+        and changing shapes accordingly. The blue graph represents position while the red graph represents momentum. As <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field> 
+        is changed one becomes narrower while the other is more spread out. There's an upper and lower limit to <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field>, while 
+        <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field> and <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_p
+        </math-field> can in theory be larger or smaller than this (approaching 0 or infinity), that would allow the plots to be 
+        infinitely tall.
+    </p>
+
+    <p>
+        Setting <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field> indirectly sets <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_p
+        </math-field>, because we are plotting the maximum possible accuracy for both.
+    </p>
+
+    <pre>
+        SigmaX = sigmaXSlider.value
+        SigmaP = 1/(2 * SigmaX)
+    </pre>
+
+    <p>
+        as always, we set <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \hbar = 1
+        </math-field> to simplify:
+    </p>
+
+    <p>
+        <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_p = \frac{1}{2 \sigma_x}
+        </math-field> <br>
+        <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x \sigma_p = \frac{\sigma_x}{2 \sigma_x} = \frac{1}{2}
+        </math-field> <br>
+    </p>
+
+</section>
