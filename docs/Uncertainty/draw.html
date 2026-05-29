@@ -1,0 +1,149 @@
+<section>
+    <h1>draw</h1>
+
+    <p>
+        <b>draw()</b> runs each frame, it essentially reads the value of all three sliders and stores them in <br>
+        x0 <br>
+        p0 <br>
+        SigmaX <br>
+        calculates SigmaP from SigmaX <br>
+        <pre>
+            SigmaX = sigmaXSlider.value
+            SigmaP = 1/(2 * SigmaX)
+        </pre> <br>
+        and calls four functions to draw the graphs: <br>
+        <b>drawPosition()</b> <br>
+        <b>drawMomentum()</b> <br>
+        <b>drawPositionEnvelope()</b> <br>
+        <b>drawMomentumEnvelope</b> <br>
+        All of these make use of the global variables mentioned above. <br>
+        <b>draw()</b> also sets color and strokeweight before calling these, this could have been done in the functions themselves 
+        which might seem more clean but it really does not matter. <br>
+        See <b>draw()</b> in full at the bottom of the page.
+    </p>
+
+    <p>
+        <b>drawMomentum()</b> and <b>drawMomentumEnvelope()</b> are identical to their position counterparts except for the variables 
+        SigmaP and p0 being swapped out for SigmaX and x0. So, I will go through <b>drawMomentum()</b> and 
+        <b>drawMomentumEnvelope()</b> but not the others.
+    </p>
+
+    <h3>drawMomentum()</h3>
+
+    <p>
+        <b>drawMomentum()</b> draws the momentum-space wave function. It first translates the origin to the center of the 
+        momentum graph It then loops from 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            x_{min}
+        </math-field> to 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+                x_{max}
+        </math-field>, using each value as a momentum value 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            p
+        </math-field>. For each point it draws: 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \frac{1}{\sigma_p\sqrt{2\pi}} e^{-\frac{(p-p_0)^2}{2\sigma_p^2}}\cos(x_0p)
+        </math-field> multiplied by a scalar in each direction so the graph fills the screen nicely <br> 
+        Here 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            p_0</math-field> is the mean momentum, 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_p
+        </math-field> is the momentum standard deviation, and 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            x_0
+        </math-field> controls the oscillation through the cosine term. The exponential term gives the Gaussian envelope, 
+        while 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \cos(x_0p)
+        </math-field> gives the oscillating real part inside that envelope. After drawing, the function translates the origin 
+        back to its original position. 
+    </p>
+
+    <pre>
+        let drawMomentum = () => {
+            translate(windowWidth/2, (windowHeight + momentumHeight)/2)
+            beginShape()
+            for(let i=xMin; i <= xMax; i+=.005) {
+                vertex(i*(windowWidth/Lx), -1 * 40*(1/ (SigmaP * Math.sqrt(2 * Math.PI))) * (Math.E**(-1 * (i - p0)**2 / (2*SigmaP**2)) * Math.cos(x0*i)))
+            }
+            endShape()
+            translate(-windowWidth/2, -1*(windowHeight + momentumHeight)/2)
+        }
+    </pre>
+         
+
+    <h3>drawMomentumEnvelope()</h3>
+
+    <p>
+        <b>drawMomentumEnvelope()</b> is the same as <b>drawMomentum()</b>, but without the cosine term. This means it 
+        only draws the Gaussian envelope: 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \frac{1}{\sigma_p\sqrt{2\pi}} e^{-\frac{(p-p_0)^2}{2\sigma_p^2}}
+        </math-field>. It represents the overall shape and amplitude limit of the momentum distribution, centered around 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            p_0
+        </math-field>, with width controlled by 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\sigma_p</math-field>. 
+    </p>
+
+    <pre>
+        let drawMomentumEnvelope = () => {
+            translate(windowWidth/2, (windowHeight + momentumHeight)/2)
+            beginShape()
+            for(let i=xMin; i <= xMax; i+=.005) {
+                vertex(i*(windowWidth/Lx), -1 * 40*(1/ (SigmaP * Math.sqrt(2 * Math.PI))) * (Math.E**(-1 * (i - p0)**2 / (2*SigmaP**2))))
+            }
+            endShape()
+            translate(-windowWidth/2, -1*(windowHeight + momentumHeight)/2)
+        }
+    </pre>
+
+    <p>
+        Notice that as x0 or p0 shifts it has no effect on the envelope of the other but it does change the oscillatory 
+        frequency of the real (and imaginary) part of the wave function. Meaning, while the wave function does change, the 
+        probability distribution does not.
+    </p>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <pre>
+        function draw() {
+            let positionSlider = document.getElementById("position")
+            let momentumSlider = document.getElementById("momentum")
+            let sigmaXSlider = document.getElementById("sigmax")
+
+            let bgColor = color('#F1F1F1')
+            let white = color("#FFF")
+            let blue = color(32,115,232)
+            let red = color(252,65,32)
+            let range = chroma.scale(['#2073E8', '#FFF', '#FC4120']).mode('lab')
+
+            x0 = positionSlider.value
+            p0 = momentumSlider.value
+            SigmaX = sigmaXSlider.value
+            SigmaP = 1/(2 * SigmaX)
+
+            // console.log(range(SigmaX/5))
+            sigmaXSlider.style.setProperty('--thumb-color', range(SigmaX/5))
+
+
+            background(bgColor)
+            strokeWeight(3)
+            stroke(32,115,232)
+            drawPosition()
+            stroke(252,65,32)
+            drawMomentum()
+            strokeWeight(4)
+            stroke(32,115,232)
+            drawPositionEnvelope()
+            stroke(252,65,32)
+            drawMomentumEnvelope()
+            drawTicks()
+        }
+    </pre>
+</section>

@@ -1,0 +1,78 @@
+<section>
+    <h1>Setup</h1>
+
+    <p>
+        <b>setup()</b> initializes the canvas to draw on and sets its size and background, declares variables and sets the 
+        parameters for the visualization. Including step, max, min and initial position of input sliders. x0 and p0 are not 
+        initially = 0 because doing so makes the thumbs lay in line but not quite (read, their position differs by a few 
+        pixels, this tickles in all the wrong places).
+    </p>
+
+    <pre>
+        function setup() {
+            createCanvas(windowWidth, windowHeight)
+            background(230)
+            frameRate(24)
+            
+            // Numerical grid parameters
+            Lx = 50
+            Lp = 10
+            N = 1000
+            
+            // Inputs for Gaussian
+            p0=-4
+            SigmaX = 3
+            SigmaP = 1/(2*SigmaX)
+
+            SigmaXMax = 5
+            SigmaXMin = .1
+            
+            // Initial mean position
+            x0 = 5
+            
+            // Window fixation values
+            xMin = -Lx/2
+            xMax = Lx/2
+            yMin = -1.00
+            yMax = 1.00
+
+            positionHeight = -350
+            momentumHeight = 125
+
+            document.getElementById("position-tick-numbers").style.top = (windowHeight/2  + 65 + (positionHeight /2)).toString() + "px"
+            document.getElementById("momentum-tick-numbers").style.top = (windowHeight/2  + 65 + (momentumHeight /2)).toString() + "px"
+            
+            let positionSlider = document.getElementById("position")
+            let momentumSlider = document.getElementById("momentum")
+            let sigmaXSlider = document.getElementById("sigmax")
+            
+            sigmaXSlider.max = SigmaXMax
+            sigmaXSlider.min = SigmaXMin
+            
+            positionSlider.step = .001
+            momentumSlider.step = .001
+            sigmaXSlider.step = .001
+            
+            sigmaXSlider.value = (SigmaXMax + SigmaXMin)/2
+            
+            positionSlider.min = -20
+            positionSlider.max = 20
+            momentumSlider.min = -20
+            momentumSlider.max = 20
+
+
+            positionSlider.value = x0.toString()
+            momentumSlider.value = p0.toString()
+            
+            document.getElementById("x-min").innerHTML = -20
+            document.getElementById("x-max").innerHTML = 20
+            document.getElementById("p-min").innerHTML = -20
+            document.getElementById("p-max").innerHTML = 20
+            document.getElementById("sigmaX-min").innerHTML = SigmaXMin.toString()
+            document.getElementById("sigmaX-max").innerHTML = SigmaXMax.toString()
+            
+            drawPosition()
+            drawMomentum()
+        }
+    </pre>
+</section>
