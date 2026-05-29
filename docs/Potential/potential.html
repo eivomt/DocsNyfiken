@@ -1,0 +1,343 @@
+<section>
+    <h1>Quantum potential</h1>
+
+    <p>
+        oh boy. <br>
+        explaining things you do not yourself understand 101 here we go. <br>
+    </p>
+
+
+    <p style="padding-left: 4rem;">
+        Bohmian mechanics is the minimal completion of Schrödinger's equation, for a nonrelativistic system of particles, to a 
+        theory describing a genuine motion of particles. For Bohmian mechanics the state of a system of N particles is described 
+        by its wave function ψ  =  ψ(q1,...,qN)  =  ψ(q), a complex (or spinor) valued function on the space of possible 
+        configurations q of the system, together with its actual configuration Q defined by the actual positions Q1,...,QN of 
+        its particles. The theory is then defined by two evolution equations: Schrödinger's equation <br>
+
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            i\hbar\frac{\partial \Psi}{\partial t} = H \Psi
+        </math-field> <br>
+        for ψ(t), where H is the nonrelativistic (Schrödinger) Hamiltonian, containing the masses of the particles and a potential 
+        energy term, and a first-order evolution equation, 
+        <br>
+        <br>
+        
+        The Guiding Equation: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \frac{dQ_k}{dt} = \frac{\hbar}{mk} \operatorname{Im} [\frac{\Psi^* \partial k \Psi}{\Psi^* \Psi}] (Q_1, ... , Q_N)
+        </math-field>
+    </p>
+
+    <p>
+        <a href="https://plato.stanford.edu/archives/sum2005/entries/qm-bohm/#ge" target="_blank">
+            <i>Stanford Encyclopedia of Philosophy - Bohmian Mechanics</i>
+        </a>
+    </p>
+
+    <p>
+        <!-- What you're seeing is a time independent Q, heavily modified to escape numerical artefacts and infinities all over 
+        the place. Q is generated from a matrix produced by the MATlab script below. 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \Psi
+        </math-field>
+        is a linear combination of two <a href="https://www.acs.psu.edu/drussell/demos/membranecircle/circle.html">
+            bessel functions
+        </a> of the third kind, also called Hankel functions. (<i>(0,1) mode</i> ) -->
+        <!-- nope -->
+    </p>
+    
+    
+    <h3>Bessel functions</h3>
+
+    <p>
+        Bessel and Hankel functions are central, as they define 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi</math-field> in our MATlab script:
+    </p>
+
+    <pre>
+        % Radial wavefunctions
+        %Psi1 = besselh(0, 1, k*R1);   % J_0(k*r)
+        %Psi2 = besselh(0, 1, k*R2);   % J_0(k*r)
+        %Psi = Psi1 + Psi2;
+    </pre>
+
+    <p>
+        The <a href="https://se.mathworks.com/help/matlab/ref/besselh.html#bvgg_k6-2">
+            besselh(nu, K, Z)
+        </a>  function has a bit of a misleading name, it does not in fact return a bessel function but a 
+        Hankel function, hence the h I guess. Regardless, let's look at what that means.
+    </p>
+
+    
+    <h5>order 0</h5>
+    <p>
+        a Bessel function of order 0 has no angular dependence, making it perfectly circularly symmetric. A higher order 
+        bessel funciton gives you increasingly intricate angular structure. Pretty sure that's fancy talk for how many nodes 
+        there are on the membrane, see <a target="_blank" href="https://www.acs.psu.edu/drussell/demos/membranecircle/circle.html">
+            The (0,1) Mode
+        </a>
+    </p>
+    <figure>
+        <img style="width: 60vw;" src="/docs/Potential/firstKindBessel.png" alt="">
+        <figcaption>
+            <math-field style="font-size: larger;" read-only virtual-keyboard-mode="off" menu-items="[]">
+                J_0(x)
+            </math-field>
+             First kind Bessel function, order 0
+        </figcaption>
+    </figure>
+
+    <figure>
+        <img style="width: 60vw;" src="/docs/Potential/secondKindBessel.png" alt="">
+        <figcaption>
+            <math-field style="font-size: larger;" read-only virtual-keyboard-mode="off" menu-items="[]">
+                Y_0(x)
+            </math-field>
+             Second kind Bessel function , order 0 
+        </figcaption>
+    </figure>
+
+    <p>
+        The Hankel function of the first kind and 0th order is a complex-valued combination of the first and second 
+        kind Bessel functions; <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            H^{(1)}_0 (x) = J_0(x) + iY_0(x)
+        </math-field> <br>
+        Or in plain language its real part is equal to
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            J_0(x)
+        </math-field> and its imaginary part is equal to
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            Y_0(x)
+        </math-field>
+    </p>
+
+    <figure>
+        <img style="width: 60vw;" src="/docs/Potential/firstKindHankel.png" alt="">
+        <figcaption>
+            <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+                H^{(1)}_0 (x)
+            </math-field> as a complex-valued combination, real component drawn in blue, imaginary component in orange.
+        </figcaption>
+    </figure>
+
+    <p>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            J_0
+        </math-field> and
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            Y_0
+        </math-field> are the circular-wave equivalents of sine and cosine. Separately they behave like standing-wave 
+        components. Combined into a Hankel function, they become an outward-propagating cylindrical wave, analogous to how 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \cos (x) + i \sin (x) = e^{ix}
+        </math-field> represents a travelling wave.
+    </p>
+
+
+
+
+    <h3>Q</h3>
+
+    <figure>
+        <img src="/docs/Potential/trajectories.png" alt="" style="width: 60vw;">
+        <figcaption><i>initial use case for Q, time evolution of a particles position</i></figcaption>
+    </figure>
+
+
+    <h3>MATlab</h3>
+
+    <pre>
+        % Parameters
+        N = 1000;            % Grid size
+        L = 10;              % Physical size (0 to L in x and y)
+        k = 5;               % Wave number
+        d = 7;               % Distance between centres
+        Sp = 98.5;           % Smoothing
+
+        % Create 2D grid
+        x = linspace(-L, L, N);
+        y = linspace(-L, L, N);
+        [X, Y] = meshgrid(x, y);
+        R1 = sqrt(X.^2 + (Y+d/2).^2);   % Radial distance from centre 1
+        R2 = sqrt(X.^2 + (Y-d/2).^2);   % Radial distance from centre 1
+
+
+        hx = x(2)-x(1);
+        hy = y(2)-y(1);
+
+        % Cutoff
+        %Rmin = 2e-1;
+        %R1(R1&lt;Rmin) = Rmin;
+        %R2(R2&lt;Rmin) = Rmin;
+
+        % Smooth core
+        a = 8*max(hx,hy);
+        R1eff = sqrt(R1.^2 + a^2);
+        R2eff = sqrt(R2.^2 + a^2);
+        Psi1 = besselh(0,1, k*R1eff);
+        Psi2 = besselh(0,1, k*R2eff);
+        Psi = Psi1 + Psi2;
+
+        % Radial wavefunctions
+        %Psi1 = besselh(0, 1, k*R1);   % J_0(k*r)
+        %Psi2 = besselh(0, 1, k*R2);   % J_0(k*r)
+        %Psi = Psi1 + Psi2;
+
+        % For calculating, smoothening and regularizing the quantum potential
+        Epsilon = 1e-6;                         % Used in regularization
+        % Kernel for Laplacian (5 point stencil)
+        wx = 1/(12*hx^2);
+        wy = 1/(12*hy^2);
+        Kernel_Laplace = [0 0 -wy 0 0; 
+            0 0 16*wy 0 0;
+            -wx 16*wx -30*(wx+wy) 16*wx -wx;
+            0 0 16*wy 0 0;
+            0 0 -wy 0 0]; 
+        % Kernel for gradient (5 point stencil)
+        Kernel_Gradient_X = [1 -8 0 8 -1]*1/(12*hx);
+        Kernel_Gradient_Y = [1 -8 0 8 -1].'*1/(12*hy);
+        % Kernel for Gaussian-like convolution
+        NN = 4/(hx*hy) + 2*(1/hx + 1/hy) + 1;
+        Kernel_Gauss = 1/NN*[1/(hx*hy) 1/hy 1/(hx*hy); 
+        1/hx 1 1/hx; 1/(hx*hy) 1/hy 1/(hx*hy)];
+
+        % Construct quantum potential
+        Rho = abs(Psi).^2;
+        Qpot = conv2(Rho, Kernel_Gradient_X, 'same').^2;
+        Qpot = Qpot + conv2(Rho, Kernel_Gradient_Y, 'same').^2;
+        Qpot = -0.5*Qpot./(Rho+Epsilon).^2;
+        Qpot = Qpot + conv2(Rho, Kernel_Laplace, 'same')./(Rho+Epsilon);
+        Qpot = -1/4*Qpot;
+        MinVal = -500;
+        MaxVal = 10;
+        Qpot = max(Qpot, MinVal);
+        Qpot = min(Qpot, MaxVal);
+
+        % Smoothening by convolution
+        Qpot = conv2(Qpot, Kernel_Gauss, 'same');
+
+        writematrix(Qpot, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/Qpot.csv');
+
+        dQdx = conv2(Qpot, Kernel_Gradient_X, 'same'); 
+        dQdy = conv2(Qpot, Kernel_Gradient_Y, 'same');
+
+        Fx = -dQdx; 
+        Fy = -dQdy;
+
+
+        nb = 3;   % boundary thickness in grid points (>= stencil radius)
+
+
+        Fx(1:nb,:)        = NaN;
+        Fx(end-nb+1:end,:) = NaN;
+        Fx(:,1:nb)        = NaN;
+        Fx(:,end-nb+1:end) = NaN;
+
+        Fy(1:nb,:)        = NaN;
+        Fy(end-nb+1:end,:) = NaN;
+        Fy(:,1:nb)        = NaN;
+        Fy(:,end-nb+1:end) = NaN;
+        
+        dataForce = [X(:), Y(:), Fx(:), Fy(:)]; 
+        writematrix(dataForce, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/data/Q_gradient_negative.csv'); 
+
+
+
+        % Interpolate at wave centers
+        x0 = 0;
+        y1 = -d/2;
+        y2 = d/2;
+
+        Q1_center = interp2(X, Y, Qpot, x0, y1, 'spline');
+        Q2_center = interp2(X, Y, Qpot, x0, y2, 'spline');
+
+        Q = Qpot;
+        S = prctile(abs(Q(:)), Sp);
+        QpotVisualize = S * tanh(Q / S);
+
+
+
+        Fx = QpotVisualize;
+        Fx(1:nb,:)        = NaN;
+        Fx(end-nb+1:end,:) = NaN;
+        Fx(:,1:nb)        = NaN;
+        Fx(:,end-nb+1:end) = NaN;
+
+        Qmaximum = 1;
+        Qscale = 50;
+        Qvis_compressed = Qmaximum * tanh(Fx / Qscale);
+
+
+        % Cut off edges and peaks for visualization
+        %QpotVisualize = Qpot.*(abs(X)&lt;0.9*L).*(abs(Y)&lt;0.9*L);
+        %Qmax = 1e2;   % choose based on your system units
+        %QpotVisualize = min(max(QpotVisualize, -Qmax), Qmax);
+
+        % Remove elements within the cutoff
+        %for Xind = 1:N
+        %  for Yind = 1:N
+        %    if R1(Xind, Yind) &lt;= 1.1*Rmin | R2(Xind, Yind) &lt;= 1.1*Rmin
+        %      QpotVisualize(Xind,Yind) = NaN;
+        %    end
+        %  end
+        %end
+
+        cmap = [ ...
+            linspace(0.97,0.90,100)', ...  % R: off-white → light tan
+            linspace(0.96,0.92,100)', ...  % G
+            linspace(0.90,0.85,100)'  ...  % B
+        ];
+
+        data = [X(:), Y(:), Qvis_compressed(:)];
+        writematrix(data, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/data/Q.csv');
+
+        % Visualization
+        figure(1);
+        surf(X, Y, Qvis_compressed)
+        shading interp
+        axis equal
+        colormap("summer")
+        xlabel('x') 
+        ylabel('y') 
+        colorbar
+
+        % Same - as colourplot
+        figure(2);
+        pcolor(X, Y, Qvis_compressed)
+        shading interp
+        colormap(cmap)
+        axis square
+        xlabel('x') 
+        ylabel('y') 
+        colorbar
+
+        figure;
+
+        % Filled background (subtle color wash)
+        contourf(X, Y, Qvis_compressed, 100, 'LineColor', [.7 .7 .7]);
+        axis equal tight
+        hold on
+
+        % Contour lines (the actual structure)
+        contour(X, Y, Qvis_compressed, 99.99999999, ...
+            'LineColor', [1.00 1.00 1.00], ...
+            'LineWidth', 0.5);
+
+        hold off
+
+        colormap(cmap)
+        colorbar
+        xlabel('x')
+        ylabel('y')
+
+        % Visualization
+        figure(4);
+        surf(X, Y, Qpot)
+        shading interp
+        colormap("summer")
+        xlabel('x') 
+        ylabel('y') 
+        colorbar
+    </pre>
+</section>
