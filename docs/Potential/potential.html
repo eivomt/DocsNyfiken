@@ -227,7 +227,7 @@
             Qpot = max(Qpot, MinVal);
             Qpot = min(Qpot, MaxVal);
         </pre>
-        Note the upper and lower bound to Q, max / minVal. 
+        Note the upper and lower bound to Q, max / minVal and the epsilon guarding against division by zero errors.
         <br>
         Before we store Q as a csv file it goes through one final tampering, a gaussian blur. Familiar to all who have ever tried 
         photoshop. As you might have noticed, the Q we store is a few steps from the actual Q corresponding to the wave function 
@@ -261,7 +261,7 @@
     <h3>visualize</h3>
 
     <p>
-        All well and good I think you'll agree but these are not what's shown as the surface on your page. To visualize it Q 
+        All well and good, I think you'll agree, but these are not what's shown as the surface on your page. To visualize it Q 
         has been removed even further from reality by passing it through a hyperbolic tangent function to compress very large 
         absolute values. This final abstraction we store as a third matrix.
 
