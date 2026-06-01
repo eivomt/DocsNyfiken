@@ -133,7 +133,9 @@
 
     <p>
         In bohmian mechanics, the total force acting on a particle is the sum of the negative slope of the classical potential 
-        V and the quantum potential U. In the special case of a free particle, the classical potential 
+        V and the quantum potential U. <br> <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            F_k = -\nabla_k V - \nabla_k U_Q
+        </math-field> <br> In the special case of a free particle, the classical potential 
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             V = 0
         </math-field> and so the only force acting on the particle is the negative slope of U.
@@ -142,13 +144,134 @@
     <figure>
         <img src="/docs/Potential/trajectories.png" alt="" style="width: 60vw;">
         <figcaption><i>Time evolution of a particles position, acted upon by U</i></figcaption>
-    </figure>
+    </figure>0
 
     <ul>
         <li>the potential is represented as a curved landscape</li>
         <li>the force points 'downhill'</li>
         <li>steeper regions correspond to a stronger force</li>
     </ul>
+
+    <h3>infinity at origin</h3>
+    <p>
+        the value of a Hankel function is <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \infty
+        </math-field> at the origin. This will not do! The commented out section gives a hard cutoff at some value Rmin
+        <br>
+        <pre>
+            % Cutoff
+            %Rmin = 2e-1;
+            %R1(R1&lt;Rmin) = Rmin;
+            %R2(R2&lt;Rmin) = Rmin;
+        </pre>
+        but that makes the surface and its slope dicontinuous at the cutoff. Instead we used this solution:
+        <br>
+        <pre>
+            % Smooth core
+            a = 8*max(hx,hy);
+            R1eff = sqrt(R1.^2 + a^2);
+            R2eff = sqrt(R2.^2 + a^2);
+            Psi1 = besselh(0,1, k*R1eff);
+            Psi2 = besselh(0,1, k*R2eff);
+            Psi = Psi1 + Psi2;
+        </pre>
+        Where 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            a^2
+        </math-field> 
+        is added to 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            R^2
+        </math-field> 
+        so 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            R^2
+        </math-field> 
+        is never 0. That makes the surface continous but has the disadvantage of affecting the 
+        whole surface instead of only the 'problem area', at origin.
+    </p>
+
+    <h3>construct Q</h3>
+    <p>
+        to calculate  <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \partial_k \Psi
+        </math-field> we use a <a href="https://en.wikipedia.org/wiki/Five-point_stencil"> 5 point stencil</a> since, if you 
+        recall we need this to calculate Q, the guiding equation:
+        <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \frac{dQ_k}{dt} = \frac{\hbar}{mk} \operatorname{Im} [\frac{\Psi^* \partial k \Psi}{\Psi^* \Psi}] (Q_1, ... , Q_N)
+        </math-field>
+        <br>
+        for some reason this is true:
+        <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            Q = -\frac{1}{4} \frac{\nabla^2 \rho}{\rho} - \frac{1}{4} \frac{|\nabla \rho|^2}{\rho^2}
+        </math-field>
+        <br>
+        (where 
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \rho = |\Psi|^2
+        </math-field>)
+        <br>
+        in which case, computer.fix() looks something like:
+        <pre>
+            % Construct quantum potential
+            Rho = abs(Psi).^2;
+            Qpot = conv2(Rho, Kernel_Gradient_X, 'same').^2;
+            Qpot = Qpot + conv2(Rho, Kernel_Gradient_Y, 'same').^2;
+            Qpot = -0.5*Qpot./(Rho+Epsilon).^2;
+            Qpot = Qpot + conv2(Rho, Kernel_Laplace, 'same')./(Rho+Epsilon);
+            Qpot = -1/4*Qpot;
+            MinVal = -500;
+            MaxVal = 10;
+            Qpot = max(Qpot, MinVal);
+            Qpot = min(Qpot, MaxVal);
+        </pre>
+        Note the upper and lower bound to Q, max / minVal. 
+        <br>
+        Before we store Q as a csv file it goes through one final tampering, a gaussian blur. Familiar to all who have ever tried 
+        photoshop. As you might have noticed, the Q we store is a few steps from the actual Q corresponding to the wave function 
+        mostly because the infinities at nodes are problematic, both for visualization and for computing forces later.
+    </p>
+
+    <h3>Get gradient</h3>
+
+    <p>
+        As we touched on earlier, the sum of all forces acting on a free particle is equal to the negative gradient of Q. Now that 
+        we have Q, all we need to find the force is to compute the gradient at whatever point we're interested in. Luckily for us 
+        Q is time independent, because we said so (it really shouldn't be), so we can compute the gradient at all points (with 
+        some arbitrary resolution) and store this as a vector field to refer back to when we want the acceleration of our 
+        particle, just like good old Newton would have liked it: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            F = ma
+        </math-field>
+        So yes, this we store as another matrix:
+        <pre>
+            dQdx = conv2(Qpot, Kernel_Gradient_X, 'same'); 
+            dQdy = conv2(Qpot, Kernel_Gradient_Y, 'same');
+
+            Fx = -dQdx; 
+            Fy = -dQdy;
+
+            dataForce = [X(:), Y(:), Fx(:), Fy(:)]; 
+            writematrix(dataForce, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/data/Q_gradient_negative.csv'); 
+        </pre>
+    </p>
+
+    <h3>visualize</h3>
+
+    <p>
+        All well and good I think you'll agree but these are not what's shown as the surface on your page. To visualize it Q 
+        has been removed even further from reality by passing it through a hyperbolic tangent function to compress very large 
+        absolute values. This final abstraction we store as a third matrix.
+
+        <pre>
+            Qvis_compressed = Qmaximum * tanh(Fx / Qscale);
+
+            data = [X(:), Y(:), Qvis_compressed(:)];
+            writematrix(data, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/data/Q.csv');
+        </pre>
+    </p>
 
 
     <h3>MATlab</h3>
