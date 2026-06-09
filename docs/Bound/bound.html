@@ -2,17 +2,33 @@
     <h1>Bound states</h1>
 
     <p>
-        A visualization of a wavefunction defined as a superposition of the allowed bound states of a potential well, evolving in 
-        time. Users can interact with the visualization by setting the probability of each bound state and by making a measurement, 
-        at which point the wavefunction collapses into one of the, in this case 6, allowed states. Each measurement made is stored 
-        and shown in a GUI element, visually identical to the probability control, the educational point being that, although 
-        it is impossible to predict what state a wave function in a superposition will collapse to, as the number of
-        measurements increases, the distribution of measurements will converge on the probability distribution set by the user. The 
-        option is also provided, to make 5 measurements at once. Added to make arriving at a measurement distribution which reflects 
-        the probability distribution less tiresome, once the point of collapsing into a single state has been made.
-        <br><br>
-        Here the plots are made with p5js, and so uses a conventional p5js flow. <b>function setup()</b> is run once and initializes 
-        the canvas, while <b>function draw()</b> is run every frame and updates the plot continuously.
+        This visualization shows the time evolution of a wave function represented as a superposition of the bound states of a
+        potential well. The user can adjust the probability associated with each of the six available energy eigenstates,
+        thereby controlling the composition of the superposition.
+    </p>
+
+    <p>
+        At any point, the user may perform a measurement. The wave function then collapses into one of the six allowed states,
+        with the probability of each outcome determined by the selected coefficients. While the result of any individual
+        measurement is inherently unpredictable, the distribution of outcomes over many measurements follows the underlying
+        probability distribution.
+    </p>
+
+    <p>
+        To illustrate this, every measurement is recorded and displayed in a histogram alongside the probability controls.
+        As the number of measurements increases, the measured distribution gradually converges towards the probabilities
+        specified by the user, demonstrating the statistical interpretation of quantum mechanics and the Born rule.
+    </p>
+
+    <p>
+        A convenience option is provided to perform five measurements simultaneously. This allows the distribution to emerge
+        more quickly once the behaviour of individual wave function collapses has been observed.
+    </p>
+
+    <p>
+        The visualization is implemented using p5.js and follows the standard p5.js execution model. The
+        <b>setup()</b> function is executed once when the page loads and initializes the simulation, while
+        <b>draw()</b> is executed once per frame and continuously updates the visualization.
     </p>
 
      <h3>

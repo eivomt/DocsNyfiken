@@ -13,6 +13,7 @@ document.querySelectorAll("[data-page]").forEach(button => {
         const response = await fetch(button.dataset.page);
         const html = await response.text();
         content.innerHTML = html;
+        window.scrollTo(0,0)
     });
 });
 
@@ -22,6 +23,7 @@ document.addEventListener("click", async (event) => {
     if (home) {
         event.preventDefault();
         content.innerHTML = homeHTML;
+        window.scrollTo(0,0)
         return;
     }
 
