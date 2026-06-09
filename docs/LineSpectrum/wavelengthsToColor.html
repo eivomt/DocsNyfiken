@@ -1,31 +1,44 @@
 <section>
-    <h1>From wavelengths to colors</h1>
+    <h1>From Wavelengths to Colours</h1>
+
     <h5>hydrogen.js</h5>
 
     <p>
-        html, css, javascript unfortunately do not think of colors as different wavelengths of light but as combinations of red, 
-        green and blue (the same goes for us, to be fair to the computer). Having 
-        <a class="nav-link" href="docs/LineSpectrum/quantumJumps.html">defined our wavelengths</a> we now have to convert 
-        them to colors a computer can comprehend and display.
-    </p> <br>
-    <h3>like so - ferraverto</h3>
+        Having calculated the wavelengths emitted by hydrogen, the next step is to convert those wavelengths into colours
+        that can be displayed by a browser. While physicists typically describe light in terms of wavelength, computer
+        graphics systems represent colour using combinations of red, green, and blue (RGB) intensities.
+    </p>
+
+    <p>
+        The purpose of this script is therefore to transform a wavelength expressed in nanometres into a colour that can
+        be rendered on screen, and then use that colour to create spectral lines corresponding to the hydrogen emission
+        spectrum.
+    </p>
+
+    <h3>Converting Wavelength to RGB</h3>
+
+    <p>
+        The function <code>wavelengthToRGB()</code> approximates the visible spectrum by mapping wavelengths in the range
+        380–780 nm to RGB values.
+    </p>
+
     <pre>
         function wavelengthToRGB(lambda) {
             let R=0, G=0, B=0;
 
-            if (lambda >= 380 && lambda < 440) { R = -(lambda - 440) / (440 - 380); G = 0; B = 1; }
-            else if (lambda >= 440 && lambda < 490) { R = 0; G = (lambda - 440) / (490 - 440); B = 1; }
-            else if (lambda >= 490 && lambda < 510) { R = 0; G = 1; B = -(lambda - 510) / (510 - 490); }
-            else if (lambda >= 510 && lambda < 580) { R = (lambda - 510) / (580 - 510); G = 1; B = 0; }
-            else if (lambda >= 580 && lambda < 645) { R = 1; G = -(lambda - 645) / (645 - 580); B = 0; }
-            else if (lambda >= 645 && lambda <= 780) { R = 1; G = 0; B = 0; }
+            if (lambda >= 380 && lambda &lt; 440) { R = -(lambda - 440) / (440 - 380); G = 0; B = 1; }
+            else if (lambda >= 440 && lambda &lt; 490) { R = 0; G = (lambda - 440) / (490 - 440); B = 1; }
+            else if (lambda >= 490 && lambda &lt; 510) { R = 0; G = 1; B = -(lambda - 510) / (510 - 490); }
+            else if (lambda >= 510 && lambda &lt; 580) { R = (lambda - 510) / (580 - 510); G = 1; B = 0; }
+            else if (lambda >= 580 && lambda &lt; 645) { R = 1; G = -(lambda - 645) / (645 - 580); B = 0; }
+            else if (lambda >= 645 && lambda &lt;= 780) { R = 1; G = 0; B = 0; }
             else { R = G = B = 0; } // out of range = black
 
             // Intensity factor near vision limits
             let S = 1;
             if (lambda > 700) {
                 S = 0.3 + 0.7 * (780 - lambda) / (780 - 700);
-            } else if (lambda < 420) {
+            } else if (lambda &lt; 420) {
                 S = 0.3 + 0.7 * (lambda - 380) / (420 - 380);
             }
 
@@ -37,21 +50,47 @@
                 r: to8bit(Math.max(0, Math.min(1, R))),
                 g: to8bit(Math.max(0, Math.min(1, G))),
                 b: to8bit(Math.max(0, Math.min(1, B))),
-            };
+            }
         }
     </pre>
+
     <p>
-        We could go into the details here, but let's not. Very good, we have a way to return a RGB color from any wavelength. 
-        To add a bit of a glow effect RGB is not ideal, 
-        what we need is the same color in different intensities, or said in another way, we 
-        want to vary the brightness of the color while its hue and saturation remains constant.
+        The visible spectrum is divided into several wavelength intervals. Within each interval, the red, green, and blue
+        components are interpolated to produce a smooth transition between neighbouring colours.
     </p>
-    <h3>RGB to HSL</h3>
+
     <p>
-        RGB expresses a color in three values; Red, Green and Blue. HSL expresses it with three values as well, but instead of red, 
-        green and blue it expresses them in terms of Hue, Saturation and Lightness. Converting our RGB 
-        color code to HSL:
+        Two additional corrections are applied. First, wavelengths near the limits of human vision are assigned a reduced
+        intensity, reflecting the lower sensitivity of the eye in those regions. Second, a gamma correction is applied to
+        produce colours that appear more natural on a display.
     </p>
+
+    <p>
+        The output is an object containing red, green, and blue values in the range 0–255.
+    </p>
+
+    <h3>Converting RGB to HSL</h3>
+
+    <p>
+        While RGB is suitable for displaying colours, it is not particularly convenient when different brightness levels
+        of the same colour are required. For the glow effect used by the spectral lines, it is preferable to work in the
+        HSL colour space.
+    </p>
+
+    <p>
+        HSL represents colour in terms of:
+    </p>
+
+    <ul>
+        <li><b>Hue</b> — the colour itself</li>
+        <li><b>Saturation</b> — the colour intensity</li>
+        <li><b>Lightness</b> — the brightness of the colour</li>
+    </ul>
+
+    <p>
+        The conversion is performed by the function:
+    </p>
+
     <pre>
         function RGBToHSL(r,g,b) {
             r/=255; g/=255; b/=255;
@@ -67,9 +106,19 @@
             return { h, s: +(s*100).toFixed(1), l: +(l*100).toFixed(1) };
         }
     </pre>
+
     <p>
-        With a HSL code in hand all we need to do now is vary L to get different intensities of the same color:
+        Once converted to HSL, the lightness component can be varied independently while preserving the hue and
+        saturation of the original colour.
     </p>
+
+    <h3>Creating a Glow Effect</h3>
+
+    <p>
+        To produce the appearance of a luminous spectral line, three brightness levels of the same colour are generated.
+        These represent the outer glow, the main line, and the bright central core.
+    </p>
+
     <pre>
         function makeTripletFromHSL({h, s, l}) {
             const clamp = v => Math.max(0, Math.min(100, v));
@@ -80,23 +129,41 @@
         }
     </pre>
 
-    <h3>creating and displaying spectral lines</h3>
     <p>
-        Visible light ranges from ca. 380 - 780 nm. This spectrum represented in the user interface as a black bar to be filled 
-        with spectral lines. When we create a new line of some color corresponding to a wavelength in the Balmer series 
-        (transitions to n=2), we want to place that line in its correct position relative to the other colors in the spectrum of 
-        visible light. To do this we map it's wavelength as a number between 380 and 780 to a percentage which is then set as it's 
-        top value (relative to it's parent container, '#spectra').
+        The resulting colour triplet is later applied to nested HTML elements, creating the layered appearance of a
+        glowing emission line.
     </p>
+
+    <h3>Positioning Spectral Lines</h3>
+
+    <p>
+        Visible wavelengths occupy only a finite interval of the electromagnetic spectrum, approximately 380–780 nm.
+        Within the interface, this range is represented by a vertical spectrum bar.
+    </p>
+
+    <p>
+        To place a spectral line in the correct location, its wavelength is mapped onto a percentage of the container's
+        height:
+    </p>
+
     <pre>
         function nmToPercent(nm){
             const min = 380, max = 780;
-            return 100 - ((nm - min) / (max - min)) * 100;   // percentage of container height
+            return 100 - ((nm - min) / (max - min)) * 100;
         }
     </pre>
+
     <p>
-        Finally we have everything we need to create and place a spectral line on screen:
+        Short wavelengths are placed near the ultraviolet end of the spectrum, while longer wavelengths are positioned
+        closer to the infrared end.
     </p>
+
+    <h3>Creating Spectral Lines</h3>
+
+    <p>
+        Once the colour and position have been determined, a spectral line can be added to the display.
+    </p>
+
     <pre>
         function addSpectralLine(container, triplet, nm) {
             const line = document.createElement('div');
@@ -119,23 +186,41 @@
         }
     </pre>
 
-        <div class="flowchart">
-            <div class="box">waveLength<br>ToRGB(nm)</div>
-        
-            <div class="arrow">→</div>
-        
-            <div class="box">RGBTo<br>HSL(r,g,b)</div>
+    <p>
+        The function creates the required HTML elements, assigns the colour triplet as CSS variables, positions the line
+        within the spectrum bar, and inserts it into the document. Newly created lines are initially hidden and become
+        visible when the corresponding electronic transition is selected by the user.
+    </p>
 
-            <div class="arrow">→</div>
-        
-            <div class="box">makeTriplet<br>FromHSL(hsl)</div>
+    <h3>Processing Pipeline</h3>
 
-            <div class="arrow">→</div>
+    <p>
+        The complete conversion process can be summarized as:
+    </p>
 
-            <div class="group">
-                <div class="box">addSpectral<br>Line(root, triplet, nm)</div>
-                <div class="down-arrow">↓</div>
-                <div class="box">nmToPercent(nm)</div>
-            </div>
+    <div class="flowchart">
+        <div class="box">wavelength<br>ToRGB(nm)</div>
+
+        <div class="arrow">→</div>
+
+        <div class="box">RGBTo<br>HSL(r,g,b)</div>
+
+        <div class="arrow">→</div>
+
+        <div class="box">makeTriplet<br>FromHSL(hsl)</div>
+
+        <div class="arrow">→</div>
+
+        <div class="group">
+            <div class="box">addSpectral<br>Line(root, triplet, nm)</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">nmToPercent(nm)</div>
         </div>
+    </div>
+
+    <p>
+        Starting from a wavelength expressed in nanometres, the script generates a display colour, constructs a glow
+        effect, determines the appropriate location within the visible spectrum, and finally renders the corresponding
+        spectral line on screen.
+    </p>
 </section>

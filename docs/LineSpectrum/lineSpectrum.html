@@ -1,17 +1,29 @@
 <section>
-    <h1>Line spectrum</h1>
+    <h1>Line Spectrum</h1>
 
     <p>
-        Visualizes the emission spectrum of hydrogen. <br>
-        Users interact by choosing what energy levels to decay from and to at which point the corresponding wavelength is written 
-        to screen along with a sinus wave drawn to screen with a relative corresponding frequency. If the wavelength is within 
-        ~380 - 780 nm, a line, of that color, is drawn on a black bar representing the whole visible spectrum. If not UV or IR 
-        does a little feedback move, to indicate a wavelength in the ultraviolet or infrared according to what wavelength was 
-        recorded.
+        This visualization illustrates the emission spectrum of hydrogen. When an electron transitions from a higher
+        energy level to a lower one, the atom emits a photon whose wavelength is determined by the difference between
+        the two energy levels.
     </p>
 
-    <h3>dependencies</h3>
+    <h3>Interaction</h3>
+
+    <p>
+        The user selects an initial and final energy level. If the selected transition is valid, the corresponding
+        wavelength is calculated and displayed on screen. A sinusoidal wave is also drawn to represent the emitted
+        photon, with its frequency shown relative to the selected wavelength.
+    </p>
+
+    <p>
+        If the wavelength lies within the visible range, approximately 380–780 nm, a coloured spectral line is added
+        to the visible spectrum bar. If the wavelength falls outside this range, the visualization instead highlights
+        either the ultraviolet or infrared indicator, depending on the result.
+    </p>
+
+    <h3>Dependencies</h3>
+
     <ul>
-        <li>gsap</li>
+        <li>GSAP</li>
     </ul>
 </section>
