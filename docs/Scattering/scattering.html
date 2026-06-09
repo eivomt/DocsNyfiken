@@ -1,38 +1,45 @@
 <section>
+<section>
     <h1>Scattering</h1>
 
     <p>
-        Imagine, you're throwing a ball against a wall and catching it as it bounces back to you, quite happily. Until suddenly 
-        the ball doesn't bounce back, it flies on <i>through</i> the wall. You raise a fist to the sky, 'hey man, that's not how 
-        it works', and yet, away it flies.
+        One of the more counterintuitive predictions of quantum mechanics is that particles can be detected in regions that would
+        be classically inaccessible. A particle approaching a potential barrier with insufficient energy would, according to
+        classical mechanics, always be reflected. In quantum mechanics, however, there remains a finite probability that the
+        particle will be transmitted through the barrier.
     </p>
 
     <p>
-        A visualization of the phenomenon of tunneling / scattering, where parts of the wave function can move through potential 
-        barriers of higher energies than it should intuitively be able to overcome. Owing to the exponential, but not 
-        instantaneous, decay of the wave function in such areas.
+        This phenomenon, known as <i>quantum tunneling</i>, arises because the wave function does not vanish abruptly at the
+        boundary of a classically forbidden region. Instead, it decays exponentially inside the barrier. If the barrier is of
+        finite width, a non-zero portion of the wave function may emerge on the opposite side, giving rise to a measurable
+        transmission probability.
     </p>
 
     <p>
-        Interestingly, computer circuits are now at the scale where this effect is a barrier (pun intended) to decreasing the size 
-        of transistors further. Possibly putting an end to Moores law.
+        Quantum tunneling is not merely a theoretical curiosity. It plays a central role in numerous physical processes and
+        technologies, including nuclear decay, scanning tunneling microscopy, and modern semiconductor devices. As transistor
+        dimensions continue to shrink, tunneling currents increasingly limit further miniaturization, presenting one of the
+        challenges associated with extending Moore's Law.
     </p>
 
     <p>
-        fun facts aside, the visualization is a glorified windows media player. All it does is allow the user to view precomputed 
-        mp4 files. The UI allows the user to view the mp4 file corresponding to a particular input of barrier height and initial 
-        mean momentum, and to toggle the visibility of a separate mp4 file for the momentum distribution. The fun bit is in the 
-        python script which produces them.
+        The visualization presented here illustrates the scattering of a wave packet from a finite potential barrier. Users may
+        vary the barrier height and the initial mean momentum of the packet, observing how these parameters influence the reflected
+        and transmitted components. An optional momentum-space view can also be enabled to show the corresponding evolution of the
+        momentum distribution.
     </p>
 
-    <p style="font-size: x-small;">
-        Please ignore my failed attempt at translating the python script to javascript.
+    <p>
+        For performance reasons, the visualization itself consists of a collection of precomputed animations. The interface
+        selects and displays the animation corresponding to the chosen parameters. The underlying numerical calculations used to
+        generate these animations are performed separately in Python.
     </p>
 
-    <h3>dependencies</h3>
+    <h3>Dependencies</h3>
 
     <ul>
-        <li>no</li>
+        <li>None</li>
     </ul>
 
 </section>

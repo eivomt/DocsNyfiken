@@ -2,17 +2,103 @@
     <h1>Draw</h1>
     
     <p>
-        <b>function draw()</b> is called 60 times per second by default.
+        <b>psiTotal</b> is the array that stores the visible wave function curve. More 
+        precisely, it stores the value that is drawn
+        at each horizontal position on the canvas. In the code, the real and imaginary parts of 
+        the wave function are first calculated,
+        and then combined into a probability-like value:
+        <pre>
+            psiTotal.push((amplitudeScalar*temporaryReal**2) + amplitudeScalar*temporaryImaginary**2)
+        </pre>
+        So <b>psiTotal</b> is not the complex wave function itself, but the drawable 
+        height of the probability distribution.
     </p>
 
-    <ul>
-        <li>psiTotal</li>
-        <li>collapsed</li>
-        <li>collapseTo</li>
-        <li>resizeMeasurements()</li>
-        <li>measurement.dataset</li>
-        <li>if collapsed{}else{}</li>
-    </ul>
+    <p>
+        <b>collapsed</b> is a boolean variable that decides whether the system is currently 
+        shown as a superposition or as one
+        measured energy state. When <b>collapsed</b> is <b>false</b>, the program 
+        adds together all energy states. When it is
+        <b>true</b>, the program only draws one selected energy state.
+    </p>
+
+    <p>
+        <b>collapseTo</b> is used to make sure the measurement happens only once when 
+        the system collapses. Without it, the program
+        would choose a new random energy level on every frame. Since <b>draw()</b> runs 
+        continuously, that would make the state jump
+        constantly. When collapse starts, <b>collapseTo</b> is set to <b>true</b>. 
+        The program then chooses one energy level,
+        stores it in <b>energy</b>, updates the measurement bars, and sets:
+        <pre>
+            collapseTo = false
+        </pre>
+        After that, the same measured state continues to be drawn.
+    </p>
+
+    <p>
+        <b>resizeMeasurements()</b> updates the visual measurement bars. Each bar has a 
+        stored count of how many times that energy
+        level has been measured. The function reads those counts, normalizes them, and then 
+        changes the height of each bar:
+        <pre>
+            measurements[i].style.height = (measurementsArray[i] * sumInput).toString() + "%"
+        </pre>
+        This means that more frequently measured energy levels get taller bars.
+    </p>
+
+    <p>
+        <b>measurement.dataset</b> refers to custom data stored directly on the HTML 
+        element. In this code, each measurement bar has
+        a value called <b>data-measurements</b>.
+        
+        <pre>
+            &lt;div class="measurement-outer-container">
+                &lt;div class="measurement-container">
+                    &lt;div class="slider">
+                        &lt;div class="measurement" <b>data-measurements="0"</b>>&lt;/div>
+                    &lt;/div>
+                &lt;/div>
+                &lt;math-field class="bar-label" read-only virtual-keyboard-mode="off" menu-items="[]">E_{0}&lt;/math-field>
+            &lt;/div>
+        </pre>
+
+        JavaScript reads it like this:
+        <pre>
+            measurements[i].dataset.measurements
+        </pre>
+        and updates it like this:
+        <pre>
+            measurements[energy].dataset.measurements =
+            ((parseInt(measurements[energy].dataset.measurements)) + 1).toString()
+        </pre>
+        So the HTML element itself keeps track of how many times that energy level has been 
+        selected.
+    </p>
+
+    <p>
+        The block
+        <pre>
+            if(collapsed) {
+                ...
+            } else {
+                ...
+            }
+        </pre>
+        separates the two main behaviours of the simulation. If the system is collapsed, the 
+        program draws only the measured energy
+        state. If the system is not collapsed, the program draws the full superposition by 
+        summing over all energy states:
+        <pre>
+            for(let j=0; j&lt;EigValues.length; j++) {
+                temporaryReal += ... * amplitudeArray[j]
+                temporaryImaginary += ... * amplitudeArray[j]
+            }
+        </pre>
+        In short: <b>if(collapsed)</b> shows the result after measurement, while 
+        <b>else</b> shows the unmeasured
+        superposition.
+    </p>
 
     <br><br><br>
     <pre>

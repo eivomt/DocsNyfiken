@@ -1,13 +1,49 @@
 <section>
     <h1>Helper functions</h1>
 
-    <ul>
-        <li>calculateSum()</li>
-        <li>normalize()</li>
-        <li>recalculateAmplitudePositions()</li>
-        <li>recalculateProbabilities()</li>
-        <li>resizeMeasurements()</li>
-        <li>renormalizeInput()</li>
-        <li>setEquationValue()</li>
-    </ul>
+    <p>
+        <b>calculateSum()</b> adds together all values in an array and returns the total. It is used when normalizing probabilities
+        and slider inputs.
+    </p>
+    <br>
+
+    <p>
+        <b>normalize()</b> divides every value in an array by the array's total sum. This ensures all values add up to 1 and can be
+        interpreted as probabilities.
+    </p>
+    <br>
+
+    <p>
+        <b>recalculateAmplitudePositions()</b> converts the normalized probabilities into cumulative probability intervals. These
+        intervals are later used to randomly select an energy level during measurement according to 
+        <a href="https://en.wikipedia.org/wiki/Born_rule"> the Born rule</a>.
+    </p>
+    <br>
+
+    <p>
+        <b>recalculateProbabilities()</b> reads the slider values, stores them in <b>probabilityArray</b>, normalizes them,
+        and updates the cumulative probability intervals used for measurements.
+    </p>
+    <br>
+
+    <p>
+        <b>resizeMeasurements()</b> updates the heights of the measurement bars. It reads the number of recorded measurements,
+        normalizes them, and rescales the bars so their relative heights reflect the observed frequencies.
+    </p>
+    <br>
+
+    <p>
+        <b>renormalizeInput()</b> rescales all slider values so that their total becomes 100. This ensures the state coefficients
+        remain properly normalized after user interaction.
+    </p>
+    <br>
+
+    <p>
+        <b>setEquationValue()</b> updates the displayed mathematical expression for the state. It can either show the compact
+        summation form
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \Psi_s = \sum_{i=0}^{5}\alpha_i\psi_i
+        </math-field>
+        or expand it into the individual weighted energy eigenstates.
+    </p>
 </section>

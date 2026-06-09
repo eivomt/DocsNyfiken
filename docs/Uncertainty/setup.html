@@ -2,11 +2,39 @@
     <h1>Setup</h1>
 
     <p>
-        <b>setup()</b> initializes the canvas to draw on and sets its size and background, declares variables and sets the 
-        parameters for the visualization. Including step, max, min and initial position of input sliders. x0 and p0 are not 
-        initially = 0 because doing so makes the thumbs lay in line but not quite (read, their position differs by a few 
-        pixels, this tickles in all the wrong places).
+        <b>setup()</b> performs the one-time initialization of the simulation. It creates the canvas, sets the frame rate,
+        defines the numerical domain used for the position and momentum calculations, and assigns the initial parameters of
+        the Gaussian wave packet.
     </p>
+
+    <p>
+        The variables <b>Lx</b>, <b>Lp</b> and <b>N</b> define the computational grid: the extent of the
+        position and momentum domains and the number of sample points used in the numerical calculations. The packet is
+        initially given a mean position <b>x₀ = 5</b>, a mean momentum <b>p₀ = -4</b>, and a position uncertainty
+        <b>σₓ = 3</b>. The momentum uncertainty is then calculated from
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_p = \frac{1}{2\sigma_x}
+        </math-field>
+        corresponding to a minimum-uncertainty Gaussian state.
+    </p>
+
+    <p>
+        The function also configures the user interface by setting slider limits, step sizes, initial values and tick labels.
+        The position and momentum sliders span the interval [-20, 20], while the width slider is constrained to the range
+        defined by <b>SigmaXMin</b> and <b>SigmaXMax</b>.
+    </p>
+
+    <p>
+        The initial values of <b>x₀</b> and <b>p₀</b> are intentionally chosen to be non-zero. This avoids a small
+        visual misalignment of the slider thumbs that occurs when both sliders are initialized exactly at zero.
+    </p>
+
+    <p>
+        Finally, <b>drawPosition()</b> and <b>drawMomentum()</b> are called to generate the initial position-space
+        and momentum-space distributions before the animation begins.
+    </p>
+
+    <br><br><br>
 
     <pre>
         function setup() {

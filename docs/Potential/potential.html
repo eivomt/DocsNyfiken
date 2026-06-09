@@ -1,290 +1,300 @@
 <section>
-    <h1>Quantum potential</h1>
+    <h1>Quantum Potential</h1>
 
-    <h5>a trajectory field generated from a regularized approximation to the Bohm quantum potential</h5>
-
-    <!-- Second order formulation -->
+    <h5>A trajectory field generated from a regularized approximation of the Bohm quantum potential</h5>
 
     <p>
-        oh boy. <br>
-        explaining things you do not yourself understand 101 here we go. <br>
+        This visualization presents a trajectory field generated from a regularized approximation of the Bohm quantum
+        potential. The construction is inspired by Bohmian mechanics, an interpretation of quantum mechanics in which
+        particles possess well-defined trajectories guided by the wave function.
     </p>
 
+    <p>
+        The purpose of the visualization is not to reproduce an exact Bohmian system, but rather to illustrate how a
+        complex interference pattern can generate a structured potential landscape and an associated force field that
+        guides particle motion.
+    </p>
 
-    <p style="padding-left: 4rem;">
-        Bohmian mechanics is the minimal completion of Schrödinger's equation, for a nonrelativistic system of particles, to a 
-        theory describing a genuine motion of particles. For Bohmian mechanics the state of a system of N particles is described 
-        by its wave function ψ  =  ψ(q1,...,qN)  =  ψ(q), a complex (or spinor) valued function on the space of possible 
-        configurations q of the system, together with its actual configuration Q defined by the actual positions Q1,...,QN of 
-        its particles. The theory is then defined by two evolution equations: Schrödinger's equation <br>
+    <h3>Bohmian Mechanics</h3>
 
+    <p>
+        In Bohmian mechanics, the state of a system is described not only by a wave function
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            i\hbar\frac{\partial \Psi}{\partial t} = H \Psi
-        </math-field> <br>
-        for ψ(t), where H is the nonrelativistic (Schrödinger) Hamiltonian, containing the masses of the particles and a potential 
-        energy term, and a first-order evolution equation, 
-        <br>
-        <br>
-        
-        The Guiding Equation: <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \frac{dQ_k}{dt} = \frac{\hbar}{mk} \operatorname{Im} [\frac{\Psi^* \partial k \Psi}{\Psi^* \Psi}] (Q_1, ... , Q_N)
-        </math-field>
+            \Psi
+        </math-field>,
+        but also by the actual positions of its particles. The wave function evolves according to Schrödinger's
+        equation:
+    </p>
+
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        i\hbar\frac{\partial \Psi}{\partial t} = H \Psi
+    </math-field>
+
+    <p>
+        while particle trajectories are determined by the guiding equation:
+    </p>
+
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        \frac{dQ_k}{dt} = \frac{\hbar}{m_k}\operatorname{Im}
+        \left[
+        \frac{\Psi^*\partial_k\Psi}{\Psi^*\Psi}
+        \right]
+        (Q_1,\ldots,Q_N)
+    </math-field>
+
+    <p>
+        The velocity field defined by the guiding equation determines how particles move through configuration space.
+        The present visualization is based on a related force-based formulation involving the Bohm quantum potential.
     </p>
 
     <p>
         <a href="https://plato.stanford.edu/archives/sum2005/entries/qm-bohm/#ge" target="_blank">
-            <i>Stanford Encyclopedia of Philosophy - Bohmian Mechanics</i>
+            <i>Stanford Encyclopedia of Philosophy – Bohmian Mechanics</i>
         </a>
     </p>
 
-    <h3>Bessel functions</h3>
+    <h3>Cylindrical Waves and Interference</h3>
 
     <p>
-        Bessel and Hankel functions are central, as they define 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\Psi</math-field> in our MATlab script:
+        The wave function used in the simulation is constructed from two cylindrical outgoing waves represented by
+        Hankel functions of the first kind. These waves originate from two separated sources and serve as a simple
+        model of the interference pattern produced in a double-slit experiment.
     </p>
 
     <pre>
         % Radial wavefunctions
-        %Psi1 = besselh(0, 1, k*R1);   % J_0(k*r)
-        %Psi2 = besselh(0, 1, k*R2);   % J_0(k*r)
+        %Psi1 = besselh(0, 1, k*R1);
+        %Psi2 = besselh(0, 1, k*R2);
         %Psi = Psi1 + Psi2;
     </pre>
 
     <p>
-        The <a href="https://se.mathworks.com/help/matlab/ref/besselh.html#bvgg_k6-2">
-            besselh(nu, K, Z)
-        </a>  function has a bit of a misleading name, it does not in fact return a bessel function but a 
-        Hankel function, hence the h I guess. Regardless, let's look at what that means.
-    </p>
-
-    
-    <h5>order 0</h5>
-    <p>
-        a Bessel function of order 0 has no angular dependence, making it perfectly circularly symmetric. A higher order 
-        bessel funciton gives you increasingly intricate angular structure. Pretty sure that's fancy talk for how many nodes 
-        there are on the membrane, see <a target="_blank" href="https://www.acs.psu.edu/drussell/demos/membranecircle/circle.html">
-            The (0,1) Mode
+        MATLAB's
+        <a href="https://se.mathworks.com/help/matlab/ref/besselh.html#bvgg_k6-2" target="_blank">
+            besselh(nu,K,Z)
         </a>
+        function returns a Hankel function. For order zero, the Hankel function of the first kind is defined as:
     </p>
-    <figure>
-        <img style="width: 60vw;" src="/docs/Potential/firstKindBessel.png" alt="">
-        <figcaption>
-            <math-field style="font-size: larger;" read-only virtual-keyboard-mode="off" menu-items="[]">
-                J_0(x)
-            </math-field>
-             First kind Bessel function, order 0
-        </figcaption>
-    </figure>
 
-    <figure>
-        <img style="width: 60vw;" src="/docs/Potential/secondKindBessel.png" alt="">
-        <figcaption>
-            <math-field style="font-size: larger;" read-only virtual-keyboard-mode="off" menu-items="[]">
-                Y_0(x)
-            </math-field>
-             Second kind Bessel function , order 0 
-        </figcaption>
-    </figure>
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        H_0^{(1)}(x) = J_0(x) + iY_0(x)
+    </math-field>
 
     <p>
-        The Hankel function of the first kind and 0th order is a complex-valued combination of the first and second 
-        kind Bessel functions; <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            H^{(1)}_0 (x) = J_0(x) + iY_0(x)
-        </math-field> <br>
-        Or in plain language its real part is equal to
+        where
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             J_0(x)
-        </math-field> and its imaginary part is equal to
+        </math-field>
+        and
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             Y_0(x)
         </math-field>
+        are Bessel functions of the first and second kind respectively.
+    </p>
+
+    <p>
+        A Hankel function of order zero is rotationally symmetric and therefore represents a circular wave propagating
+        outward from a point source. Higher orders introduce angular structure, but only the zeroth-order function is
+        required here.
     </p>
 
     <figure>
-        <img style="width: 60vw;" src="/docs/Potential/firstKindHankel.png" alt="">
+        <img style="width:60vw;" src="/docs/Potential/firstKindBessel.png" alt="">
         <figcaption>
             <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-                H^{(1)}_0 (x)
-            </math-field> as a complex-valued combination, real component drawn in blue, imaginary component in orange.
+                J_0(x)
+            </math-field>
+            — Bessel function of the first kind, order zero.
+        </figcaption>
+    </figure>
+
+    <figure>
+        <img style="width:60vw;" src="/docs/Potential/secondKindBessel.png" alt="">
+        <figcaption>
+            <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+                Y_0(x)
+            </math-field>
+            — Bessel function of the second kind, order zero.
+        </figcaption>
+    </figure>
+
+    <figure>
+        <img style="width:60vw;" src="/docs/Potential/firstKindHankel.png" alt="">
+        <figcaption>
+            <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+                H_0^{(1)}(x)
+            </math-field>
+            — Real component shown in blue, imaginary component in orange.
         </figcaption>
     </figure>
 
     <p>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            J_0
-        </math-field> and
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            Y_0
-        </math-field> are the circular-wave equivalents of sine and cosine. Separately they behave like standing-wave 
-        components. Combined into a Hankel function, they become an outward-propagating cylindrical wave, analogous to how 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \cos (x) + i \sin (x) = e^{ix}
-        </math-field> represents a travelling wave.
+        The relationship between Bessel and Hankel functions is analogous to the relationship between standing and
+        travelling waves. In much the same way that
+    </p>
+
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        \cos(x)+i\sin(x)=e^{ix}
+    </math-field>
+
+    <p>
+        represents a travelling wave, the Hankel function combines the two Bessel functions into an outward-propagating
+        cylindrical wave.
     </p>
 
     <p>
-        If we define two of these outward-propagating cylindrical waves with origins separated by a distance d, we have an 
-        approximation of the double slit experiment.
+        Superposing two such waves with separated origins produces an interference pattern similar to that observed in
+        a double-slit experiment.
     </p>
 
-
-
-
-    <h3>U</h3>
+    <h3>Quantum Potential</h3>
 
     <p>
-        In bohmian mechanics, the total force acting on a particle is the sum of the negative slope of the classical potential 
-        V and the quantum potential U. <br> <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            F_k = -\nabla_k V - \nabla_k U_Q
-        </math-field> <br> In the special case of a free particle, the classical potential 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            V = 0
-        </math-field> and so the only force acting on the particle is the negative slope of U.
+        In Bohmian mechanics, the force acting on a particle may be expressed as the sum of contributions from the
+        classical potential and the quantum potential:
+    </p>
+
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        F_k = -\nabla_kV - \nabla_kQ
+    </math-field>
+
+    <p>
+        For a free particle, the classical potential vanishes and the particle dynamics are governed entirely by the
+        quantum potential. Regions where the potential changes rapidly correspond to stronger forces, while flatter
+        regions produce weaker accelerations.
     </p>
 
     <figure>
-        <img src="/docs/Potential/trajectories.png" alt="" style="width: 60vw;">
-        <figcaption><i>Time evolution of a particles position, acted upon by U</i></figcaption>
-    </figure>0
+        <img src="/docs/Potential/trajectories.png" alt="" style="width:60vw;">
+        <figcaption><i>Particle trajectories generated by the resulting force field.</i></figcaption>
+    </figure>
 
-    <ul>
-        <li>the potential is represented as a curved landscape</li>
-        <li>the force points 'downhill'</li>
-        <li>steeper regions correspond to a stronger force</li>
-    </ul>
+    <h3>Regularization of the Wave Sources</h3>
 
-    <h3>infinity at origin</h3>
     <p>
-        the value of a Hankel function is <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \infty
-        </math-field> at the origin. This will not do! The commented out section gives a hard cutoff at some value Rmin
-        <br>
-        <pre>
-            % Cutoff
-            %Rmin = 2e-1;
-            %R1(R1&lt;Rmin) = Rmin;
-            %R2(R2&lt;Rmin) = Rmin;
-        </pre>
-        but that makes the surface and its slope dicontinuous at the cutoff. Instead we used this solution:
-        <br>
-        <pre>
-            % Smooth core
-            a = 8*max(hx,hy);
-            R1eff = sqrt(R1.^2 + a^2);
-            R2eff = sqrt(R2.^2 + a^2);
-            Psi1 = besselh(0,1, k*R1eff);
-            Psi2 = besselh(0,1, k*R2eff);
-            Psi = Psi1 + Psi2;
-        </pre>
-        Where 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            a^2
-        </math-field> 
-        is added to 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            R^2
-        </math-field> 
-        so 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            R^2
-        </math-field> 
-        is never 0. That makes the surface continous but has the disadvantage of affecting the 
-        whole surface instead of only the 'problem area', at origin.
+        Hankel functions diverge at their origin, producing singularities that are problematic both numerically and
+        visually. A simple cutoff removes the divergence but introduces discontinuities in the resulting surface.
     </p>
 
-    <h3>construct Q</h3>
     <p>
-        to calculate  <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \partial_k \Psi
-        </math-field> we use a <a href="https://en.wikipedia.org/wiki/Five-point_stencil"> 5 point stencil</a> since, if you 
-        recall we need this to calculate Q, the guiding equation:
-        <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \frac{dQ_k}{dt} = \frac{\hbar}{mk} \operatorname{Im} [\frac{\Psi^* \partial k \Psi}{\Psi^* \Psi}] (Q_1, ... , Q_N)
-        </math-field>
-        <br>
-        <!-- for some reason this is true (if 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \hbar = 1 , \; m = 1
-        </math-field> ):
-        <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            Q = -\frac{1}{4} \frac{\nabla^2 \rho}{\rho} - \frac{1}{4} \frac{|\nabla \rho|^2}{\rho^2}
-        </math-field> -->
-        <!-- nope -->
-        <br>
-        <!-- (where 
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            \rho = |\Psi|^2
-        </math-field>) -->
-        <!-- nope -->
-        <br>
-        <!-- in which case, computer.fix() looks something like: -->
-        <pre>
-            % Construct quantum potential
-            Rho = abs(Psi).^2;
-            Qpot = conv2(Rho, Kernel_Gradient_X, 'same').^2;
-            Qpot = Qpot + conv2(Rho, Kernel_Gradient_Y, 'same').^2;
-            Qpot = -0.5*Qpot./(Rho+Epsilon).^2;
-            Qpot = Qpot + conv2(Rho, Kernel_Laplace, 'same')./(Rho+Epsilon);
-            Qpot = -1/4*Qpot;
-            MinVal = -500;
-            MaxVal = 10;
-            Qpot = max(Qpot, MinVal);
-            Qpot = min(Qpot, MaxVal);
-        </pre>
-        Note the upper and lower bound to Q, max / minVal and the epsilon guarding against division by zero errors.
-        <br>
-        Before we store Q as a csv file it goes through one final tampering, a gaussian blur. Familiar to all who have ever tried 
-        photoshop. As you might have noticed, the Q we store is a few steps from the actual Q corresponding to the wave function 
-        mostly because the infinities at nodes are problematic, both for visualization and for computing forces later.
+        Instead, the radial coordinate is replaced by an effective radius
     </p>
 
-    <h3>Get gradient</h3>
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        R_{\mathrm{eff}} = \sqrt{R^2 + a^2}
+    </math-field>
 
     <p>
-        As we touched on earlier, the sum of all forces acting on a free particle is equal to the negative gradient of Q. Now that 
-        we have Q, all we need to find the force is to compute the gradient at whatever point we're interested in. Luckily for us 
-        Q is time independent, because we said so (it really shouldn't be), so we can compute the gradient at all points (with 
-        some arbitrary resolution) and store this as a vector field to refer back to when we want the acceleration of our 
-        particle, just like good old Newton would have liked it: <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
-            F = ma
-        </math-field> 
-        <br>
-        So yes, this we store as another matrix:
-        <pre>
-            dQdx = conv2(Qpot, Kernel_Gradient_X, 'same'); 
-            dQdy = conv2(Qpot, Kernel_Gradient_Y, 'same');
-
-            Fx = -dQdx; 
-            Fy = -dQdy;
-
-            dataForce = [X(:), Y(:), Fx(:), Fy(:)]; 
-            writematrix(dataForce, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/data/Q_gradient_negative.csv'); 
-        </pre>
+        which smoothly regularizes the singularity while preserving continuity of the wave function and its
+        derivatives.
     </p>
 
-    <h3>visualize</h3>
+    <pre>
+        a = 8*max(hx,hy);
+        R1eff = sqrt(R1.^2 + a^2);
+        R2eff = sqrt(R2.^2 + a^2);
+        Psi1 = besselh(0,1,k*R1eff);
+        Psi2 = besselh(0,1,k*R2eff);
+        Psi = Psi1 + Psi2;
+    </pre>
+
+    <h3>Constructing the Quantum Potential</h3>
 
     <p>
-        All well and good, I think you'll agree, but these are not what's shown as the surface on your page. To visualize it Q 
-        has been removed even further from reality by passing it through a hyperbolic tangent function to compress very large 
-        absolute values. This final abstraction we store as a third matrix.
+        The quantum potential is computed from the probability density
+    </p>
 
-        <pre>
-            Qvis_compressed = Qmaximum * tanh(Fx / Qscale);
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        \rho = |\Psi|^2
+    </math-field>
 
-            data = [X(:), Y(:), Qvis_compressed(:)];
-            writematrix(data, '/Users/eo/Documents/code/Bohmian-Double-Slit-main/data/Q.csv');
-        </pre>
+    <p>
+        using finite-difference approximations implemented through five-point stencil convolution kernels.
+    </p>
+
+    <p>
+        Additional regularization is required because nodes of the wave function can produce extremely large values.
+        Small denominators are protected by an epsilon parameter, and the resulting potential is clipped to a finite
+        numerical range before further processing.
+    </p>
+
+    <pre>
+        Rho = abs(Psi).^2;
+        Qpot = conv2(Rho, Kernel_Gradient_X, 'same').^2;
+        Qpot = Qpot + conv2(Rho, Kernel_Gradient_Y, 'same').^2;
+        Qpot = -0.5*Qpot./(Rho+Epsilon).^2;
+        Qpot = Qpot + conv2(Rho, Kernel_Laplace, 'same')./(Rho+Epsilon);
+        Qpot = -1/4*Qpot;
+
+        MinVal = -500;
+        MaxVal = 10;
+
+        Qpot = max(Qpot, MinVal);
+        Qpot = min(Qpot, MaxVal);
+    </pre>
+
+    <p>
+        A final smoothing pass is applied before the potential is stored and used in later stages of the simulation.
+    </p>
+
+    <h3>Constructing the Force Field</h3>
+
+    <p>
+        Once the quantum potential has been computed, its spatial gradient is evaluated. The force field used by the
+        visualization is simply the negative gradient of the potential:
+    </p>
+
+    <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        \mathbf{F} = -\nabla Q
+    </math-field>
+
+    <p>
+        The resulting force vectors are precomputed and stored as a lookup table. During the simulation, particle
+        accelerations are obtained by interpolating this field rather than recomputing gradients in real time.
+    </p>
+
+    <pre>
+        dQdx = conv2(Qpot, Kernel_Gradient_X, 'same');
+        dQdy = conv2(Qpot, Kernel_Gradient_Y, 'same');
+
+        Fx = -dQdx;
+        Fy = -dQdy;
+    </pre>
+
+    <h3>Visualization Pipeline</h3>
+
+    <p>
+        The quantity displayed in the browser is not the raw quantum potential. The exact potential contains sharp
+        peaks and large variations that obscure its overall structure and make numerical visualization difficult.
+    </p>
+
+    <p>
+        To produce a more informative representation, the potential is smoothed and compressed using a hyperbolic
+        tangent transformation:
+    </p>
+
+    <pre>
+        Qmaximum = 1;
+        Qscale = 50;
+        Qvis_compressed = Qmaximum * tanh(Qpot / Qscale);
+    </pre>
+
+    <p>
+        The displayed surface should therefore be interpreted as a visualization of the underlying structure rather
+        than a direct rendering of the physical quantity itself. The force field driving the trajectories and the
+        surface shown on screen are related, but are not identical datasets.
+    </p>
+
+    <br><br><br>
+
+    <h3>MATLAB Source</h3>
+
+    <p>
+        The complete MATLAB script used to generate the potential, force field, and visualization data is included
+        below for reference.
     </p>
 
 
-    <h3>MATlab</h3>
 
     <pre>
         % Parameters

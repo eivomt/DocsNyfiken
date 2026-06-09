@@ -1,0 +1,53 @@
+<section>
+    <h1>User interaction</h1>
+
+    <p>
+        The user interacts with the visualization by selecting an initial energy level and a 
+        lower final energy level. When a valid
+        downward transition is chosen, the program calculates the corresponding photon wavelength 
+        and displays the associated
+        electromagnetic wave.
+    </p>
+
+    <p>
+        Each clickable energy line stores its quantum number in <b>data-n</b>.
+        
+        <pre>
+            &lt;div class="line-container">
+                &lt;div class="ball">&lt;/div>
+                &lt;div class="line" data-n="1">&lt;/div>
+                &lt;div class="line" data-n="2">&lt;/div>
+                &lt;div class="line" data-n="3">&lt;/div>
+                &lt;div class="line" data-n="4">&lt;/div>
+                &lt;div class="line" data-n="5">&lt;/div>
+                &lt;div class="line" data-n="6">&lt;/div>
+                &lt;div class="line" data-n="7">&lt;/div>
+                &lt;div class="line" data-n="8">&lt;/div>
+                &lt;div class="line" data-n="9">&lt;/div>
+                &lt;div class="line" data-n="10">&lt;/div>
+            &lt;/div>
+        </pre>
+
+        When the 
+        line is clicked, the script reads this
+        value as <b>nFrom</b> and compares it to the currently selected final level, 
+        <b>nTo</b>. A transition is only
+        shown if <b>nTo &lt; nFrom</b>, corresponding to emission from a higher to a 
+        lower energy state.
+    </p>
+
+    <p>
+        The emitted wavelength is then found from <b>waveLengthArray</b>. The matching 
+        SVG wave is displayed and animated,
+        while the transition arrow moves from the initial level to the final level. If the 
+        wavelength lies outside the visible
+        range, the infrared or ultraviolet label is briefly highlighted.
+    </p>
+
+    <p>
+        After the animation, the selected transition and wavelength are written to the interface, 
+        for example as a transition
+        from <b>n = 4</b> to <b>n = 2</b> with its corresponding wavelength in 
+        nanometres.
+    </p>
+</section>
