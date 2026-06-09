@@ -2,23 +2,33 @@
     <h1>User</h1>
 
     <p>
-        After a superuser has connected, all following connections are users. If the superuser ever disconnects, that's a 
-        problem btw, to fix this any user can type 'disconnectAll()' in the console to close all connections to the server. 
-        Then whoever connects first is once again the superuser (kind of a wonky system but it works).
+        Once a superuser has connected, subsequent clients are treated as regular users. Regular users do not control the
+        global simulation state; their role is limited to performing measurements by interacting with the coin.
     </p>
 
-    <h3>anyways - users</h3>
-
     <p>
-        Users have only one possible action, they can collapse the superposition to a definite outcome by clicking the coin. 
-        Doing so results in the screen going completely blue or red, stopping the stroke animation and displaying only one of 
-        the SVG's, heads or tails. 
+        If the superuser disconnects, the server state can become inconsistent. As a manual recovery mechanism, any connected
+        client can run <b>disconnectAll()</b> in the browser console. This closes all active connections to the server.
+        The next client to connect will then become the new superuser.
     </p>
 
-    <h3>stroke animation</h3>
+    <h3>User Interaction</h3>
 
     <p>
-        adding a stroke animation to all paths in the SVG's is done in this block:
+        A regular user has one primary action: clicking the coin. This sends a measurement request to the server. The server
+        responds with a definite outcome, after which the client updates the display to show either the blue or red result.
+    </p>
+
+    <p>
+        When a measurement has been made, the superposition animation stops. The screen changes to the corresponding colour,
+        and only the SVG associated with the measured outcome remains visible.
+    </p>
+
+    <h3>Stroke Animation</h3>
+
+    <p>
+        The animated drawing effect on the SVGs is produced by applying a stroke animation to every path in the graphic.
+        Each path has a different length, so a separate keyframe animation is generated for each one.
     </p>
 
     <pre>
@@ -32,184 +42,188 @@
 
             const styleSheet = document.styleSheets[0];
             styleSheet.insertRule(`
-                    @keyframes ${animationName} {
-                        from {
-                            stroke-dashoffset: ${length}
-                        } to {
-                            stroke-dashoffset: 0;
-                        }
+                @keyframes ${animationName} {
+                    from {
+                        stroke-dashoffset: ${length}
+                    } to {
+                        stroke-dashoffset: 0;
                     }
-                `, styleSheet.cssRules.length);
+                }
+            `, styleSheet.cssRules.length);
 
             path.style.animation = `${animationName} 4s ease-in-out infinite alternate`;
-            path.style.animationDelay = '2.75s'
+            path.style.animationDelay = '2.75s';
         });
     </pre>
 
     <p>
-        for each path we compute its length. Create an animation rule and give it an indexed name (because length varies). 
-        animate stroke-dashoffset from total length to 0 and make it go back and forth forever (infinite alternate).
+        The animation works by first hiding each path stroke using <b>strokeDashoffset</b>. The offset is then animated
+        from the full path length down to zero, creating the appearance that the SVG is being drawn over time. The
+        <b>infinite alternate</b> setting causes the animation to continuously reverse direction.
     </p>
 
-    <h3>collapse</h3>
+    <h3>Collapse</h3>
 
     <p>
-        Collapsing the 'wave function' is done by calling either <b>cutToBlue()</b> or <b>cutToRed()</b>, lets look at blue as 
-        our example (they are identical except color and which SVG is shown)
+        Once the server returns a measurement result, the client collapses the visual state by calling either
+        <b>cutToBlue()</b> or <b>cutToRed()</b>. These functions are structurally identical; they differ only in
+        which colour and SVG are displayed. The example below shows the blue outcome.
     </p>
 
     <pre>
         cutToBlue = () => {
-            Mynt.classList.add('hidden')
-            Kron.classList.add('hidden')
+            Mynt.classList.add('hidden');
+            Kron.classList.add('hidden');
 
-            coinContainer.classList.add("hard-blue")
-            coin.removeEventListener("click", sendCoinClick)
+            coinContainer.classList.add("hard-blue");
+            coin.removeEventListener("click", sendCoinClick);
 
             setTimeout(() => {
-                            
-                for (let i = 0; i < myntPaths.length; i++) {
-                    myntPaths[i].style.animation = 'none'
+                for (let i = 0; i &lt; myntPaths.length; i++) {
+                    myntPaths[i].style.animation = 'none';
                     myntPaths[i].style.strokeDasharray = length;
                     myntPaths[i].style.strokeDashoffset = 0;
                 }
 
-                for (let i = 0; i < kronPaths.length; i++) {
-                    kronPaths[i].style.animation = 'none'
+                for (let i = 0; i &lt; kronPaths.length; i++) {
+                    kronPaths[i].style.animation = 'none';
                 }
-                
-                Mynt.classList.remove('hidden')
-                
-                
-                collapsed = true
+
+                Mynt.classList.remove('hidden');
+
+                collapsed = true;
             }, 200);
-        }
+        };
     </pre>
 
     <p>
-        <h5>Walkthrough:</h5>
-        Hide both SVG's. <br>
-        Give background element a class which sets the background-color. <br>
-        After 200 milliseconds remove offset for all paths in the relevant SVG. <br>
-        Stop the animations for both SVG's. <br>
-        Remove the class which hides the SVG we want to show. <br>
-        Set the boolean collapsed to true, used elsewhere probably. <br>
-        The gradual fade of the SVG is thanks to CSS and comes automatically from adding or removing the class 'hidden'. <br>
-        <br> <br>
+        The function first hides both SVGs and applies the background class for the selected outcome. It then removes the
+        click listener from the coin, preventing the user from sending additional measurement requests before the state is
+        reset.
+    </p>
 
-        <i>CSS</i> <br>
-        <pre>
-        button { 
-            transition: .2s cubic-bezier(0.075, 0.82, 0.165, 1) 
+    <p>
+        After a short delay, the stroke animation is disabled. The relevant SVG is made fully visible by setting its stroke
+        offset to zero and removing the <b>hidden</b> class. Finally, <b>collapsed</b> is set to
+        <b>true</b>, marking the client as being in a measured state.
+    </p>
+
+    <p>
+        The fade effect is controlled through CSS:
+    </p>
+
+    <pre>
+        button {
+            transition: .2s cubic-bezier(0.075, 0.82, 0.165, 1);
         }
 
         .hidden {
             opacity: 0;
         }
-        </pre>
-    </p>
+    </pre>
 
-    <h3>case 'coin_clicked'</h3>
+    <h3>Server Handling: <b>coin_clicked</b></h3>
 
     <p>
-        When a user sends a message to the server: 'coin_clicked', the server will respond by running the following block:
+        When a user clicks the coin, the client sends a <b>coin_clicked</b> message to the server. The server determines
+        whether the user belongs to a pair and, if so, calculates the appropriate measurement outcome.
     </p>
 
     <pre>
-            if data.get("type") == "coin_clicked":
-                sender_ws = websocket
-                sender_id = connected_clients[sender_ws]["id"]
+        if data.get("type") == "coin_clicked":
+            sender_ws = websocket
+            sender_id = connected_clients[sender_ws]["id"]
 
-                partner_ws = get_partner(sender_ws)
-                if partner_ws is None:
-                    await sender_ws.send(json.dumps({
-                        "type": "coin_clicked",
-                        "inGroup": False
-                    }))
-                    continue
-
-                partner_id = connected_clients[partner_ws]["id"]
-                pair_key = get_pair_key(sender_ws, partner_ws)
-
-                first_measurement = False
-
-                if Entangled:
-                    if pair_key not in pair_states:
-                        base = random.choice([0, 1])
-                        pair_states[pair_key] = {"collapseTo": base}
-                        value = base
-                        first_measurement = True
-                    else:
-                        base = pair_states[pair_key]["collapseTo"]
-                        value = 1 - base if Opposite else base
-                else:
-                    value = random.choice([0, 1])
-
-                collapsed_values[sender_id] = value
-
+            partner_ws = get_partner(sender_ws)
+            if partner_ws is None:
                 await sender_ws.send(json.dumps({
                     "type": "coin_clicked",
-                    "inGroup": True,
-                    "partner": partner_id,
-                    "value": value,
-                    "firstMeasurement": first_measurement
+                    "inGroup": False
                 }))
+                continue
+
+            partner_id = connected_clients[partner_ws]["id"]
+            pair_key = get_pair_key(sender_ws, partner_ws)
+
+            first_measurement = False
+
+            if Entangled:
+                if pair_key not in pair_states:
+                    base = random.choice([0, 1])
+                    pair_states[pair_key] = {"collapseTo": base}
+                    value = base
+                    first_measurement = True
+                else:
+                    base = pair_states[pair_key]["collapseTo"]
+                    value = 1 - base if Opposite else base
+            else:
+                value = random.choice([0, 1])
+
+            collapsed_values[sender_id] = value
+
+            await sender_ws.send(json.dumps({
+                "type": "coin_clicked",
+                "inGroup": True,
+                "partner": partner_id,
+                "value": value,
+                "firstMeasurement": first_measurement
+            }))
     </pre>
 
     <p>
-        <h5>walkthrough</h5>
-        It stores the id of whatever user sent the message <br>
-        Checks if the sender is in a pair, if not it takes no further action <br>
-        Stores the id of the user paired to sender <br>
-        Checks whether the pair is entangled <br>
-        If not, it chooses between 0 and 1 with a random number generator <br>
-        If it is though: <br>
-        Checks if this is the first collapse of the pair. <br>
-        If the paired user has already collapsed its wave function the server replies the opposite value if opposite is true and 
-        the same value if opposite is false (0 or 1) <br>
-        If this is the first measurement of the pair, it chooses between 0 and 1 with a random number generator <br>
-        Either way the value is stored and sent back in JSON of type "coin_clicked" which prompts client action
+        The server first identifies the sender and checks whether they are paired with another user. If no partner is found,
+        the server responds with <b>inGroup: false</b> and no collapse is performed.
     </p>
 
-    <h5>client action</h5>
+    <p>
+        If the sender is part of a pair, the server determines the measurement value. For non-entangled pairs, the value is
+        chosen randomly. For entangled pairs, the first measurement generates and stores a shared base value. Later
+        measurements by the paired user are derived from this stored value. If <b>Opposite</b> is enabled, the partner
+        receives the opposite result; otherwise, both users receive the same result.
+    </p>
 
     <p>
-        User gets a JSON back of type 'coin_clicked' and runs the following block:
+        The selected value is stored in <b>collapsed_values</b> and returned to the client as a
+        <b>coin_clicked</b> response.
+    </p>
+
+    <h3>Client Handling: <b>coin_clicked</b></h3>
+
+    <p>
+        When the client receives a <b>coin_clicked</b> response, it reads <b>data.value</b> and displays the
+        corresponding result.
     </p>
 
     <pre>
         case 'coin_clicked':
-            console.log('data.value = ' + data.value)
             if (!superUser) {
-                console.log('Measured first')
-                console.log('Recieved: ' + data.value + ' from server')
                 if (data.value === 1) {
-                    console.log('Displaying red')
-                    cutToRed()
+                    cutToRed();
                 } else if (data.value === 0) {
-                    console.log('Displaying blue')
-                    cutToBlue()
+                    cutToBlue();
                 }
             }
-        break
+            break;
     </pre>
 
     <p>
-        Client side is straight forward, if it gets a 1 back in data.value, call <b>cutToRed()</b> if 0 <b>cutToBlue()</b> <br>
-        Along with a bunch of debug logs which should probably be removed at this point.
+        A value of <b>1</b> triggers <b>cutToRed()</b>, while a value of <b>0</b> triggers
+        <b>cutToBlue()</b>. Any debug logging around this block can be removed once the interaction is stable.
     </p>
 
-    <h3>case 'reset' - back to superposition</h3>
+    <h3>Resetting the System</h3>
 
     <p>
-        When a superuser presses the button 'reset measurements' it sends "reset-all" to the server, prompting it to run this 
-        block:
+        When the superuser presses <i>reset measurements</i>, the client sends a <b>reset-all</b> message to the server.
+        The server clears all stored pair states and collapsed values, then broadcasts a <b>reset</b> message to every
+        connected client.
     </p>
 
     <pre>
         if data.get("type") == "reset-all":
             pair_states.clear()
             collapsed_values.clear()
+
             for client, info in connected_clients.items():
                 try:
                     await client.send(json.dumps({"type": "reset"}))
@@ -217,63 +231,61 @@
                     print(f"Error sending to client {info['id']}: {e}")
     </pre>
 
-    <h5>walkthrough</h5>
     <p>
-        delete all stored states <br>
-        broadcast to all clients: <br>
-        "reset"
-    </p>
-
-    <p>
-        users get a JSON type: 'reset' and run:
+        On the client side, the <b>reset</b> message restores the visual superposition and re-enables clicking on the
+        coin.
     </p>
 
     <pre>
         case 'reset':
-            cutToWhite()
-            coin.addEventListener("click", sendCoinClick)
+            cutToWhite();
+            coin.addEventListener("click", sendCoinClick);
+            break;
     </pre>
 
-    <p>
-        calling <b>cutToWhite()</b> and reinstating the eventListener for the coin (which calls another function, 
-        <b>sendCoinClick()</b> which I honestly can't be arsed to explain, some things must remain a mystery).
-    </p>
+    <h3><b>cutToWhite()</b></h3>
 
-    <h3>cutToWhite()</h3>
+    <p>
+        <b>cutToWhite()</b> returns the client to the unmeasured superposition state. It removes the hard red or blue
+        background, hides both SVGs temporarily, and then restarts the stroke animations for both outcomes.
+    </p>
 
     <pre>
         cutToWhite = () => {
-            coinContainer.classList.remove("hard-blue")
-            coinContainer.classList.remove("hard-red")
-            Mynt.classList.add('hidden')
-            Kron.classList.add('hidden')
-            
+            coinContainer.classList.remove("hard-blue");
+            coinContainer.classList.remove("hard-red");
+            Mynt.classList.add('hidden');
+            Kron.classList.add('hidden');
+
             setTimeout(() => {
-                
                 for (let i = 0; i &lt; myntPaths.length; i++) {
-                    zeroPath(myntPaths[i])
-                    myntPaths[i].style.animation = `mynt-${i} 4s ease-in-out infinite alternate`
+                    zeroPath(myntPaths[i]);
+                    myntPaths[i].style.animation =
+                        `mynt-${i} 4s ease-in-out infinite alternate`;
                 }
-                void myntPaths[0].offsetWidth
-                
-                Mynt.classList.remove('hidden')
-                
+
+                void myntPaths[0].offsetWidth;
+
+                Mynt.classList.remove('hidden');
+
                 for (let i = 0; i &lt; kronPaths.length; i++) {
-                    zeroPath(kronPaths[i])
-                    kronPaths[i].style.animation = `kron-${i} 4s ease-in-out infinite alternate`
-                    kronPaths[i].style.animationDelay = '2.75s'
+                    zeroPath(kronPaths[i]);
+                    kronPaths[i].style.animation =
+                        `kron-${i} 4s ease-in-out infinite alternate`;
+                    kronPaths[i].style.animationDelay = '2.75s';
                 }
-                Kron.classList.remove('hidden')
-                
-                void kronPaths[0].offsetWidth
-                collapsed = false
-            }, 350)
-        }
+
+                Kron.classList.remove('hidden');
+
+                void kronPaths[0].offsetWidth;
+                collapsed = false;
+            }, 350);
+        };
     </pre>
 
-    <p>what it do, what it does?</p>
     <p>
-        sets the background back to a neutral grey, and restarts the animations for the SVG's slightly offset so that the coin is 
-        never quite blue nor red, little column A, little column B, as is the way of the superposition.
+        The two SVG animations are restarted with a slight offset, so the coin appears as a continuous visual mixture of the
+        two possible outcomes rather than as a single definite state. Finally, <b>collapsed</b> is set to
+        <b>false</b>, allowing the client to participate in a new measurement after the next click.
     </p>
 </section>

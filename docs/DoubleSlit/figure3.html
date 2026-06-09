@@ -2,24 +2,6 @@
     <h1>Figure 3: measurement accumulation</h1>
 
     <p>
-        <pre>
-            let renderFig3 = () => {
-                const activeBtn = document.querySelector('.active-btn')
-                activeBtn.classList.remove('active-btn')
-                document.getElementById('fig3-btn').classList.add('active-btn')
-                figureCanvas.style.display = "none"
-                activeFigure = 3
-
-                const graph = document.getElementById('probability-graph')
-
-                if(graph !== null) {
-                    graph.remove()
-                }
-            }
-        </pre>
-    </p>
-
-    <p>
         renderFig3() is a little different from the others because its canvas is updated even when it isn't the active 
         figure. renderFig3() therefore just hides the canvas which displays figure 1 or 2 and deletes the graph from
         figure 2 if it's stored in DOM.
@@ -28,4 +10,20 @@
     <p>
         you can find the logic behind measurements in the measurement tab, <a class="nav-link" href="docs/DoubleSlit/measurement.html">here</a>.
     </p>
+
+    <pre>
+        let renderFig3 = () => {
+            const activeBtn = document.querySelector('.active-btn')
+            activeBtn.classList.remove('active-btn')
+            document.getElementById('fig3-btn').classList.add('active-btn')
+            figureCanvas.style.display = "none"
+            activeFigure = 3
+
+            const graph = document.getElementById('probability-graph')
+
+            if(graph !== null) {
+                graph.remove()
+            }
+        }
+    </pre>
 </section>

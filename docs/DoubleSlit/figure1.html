@@ -1,8 +1,58 @@
 <section>
     <h1>Figure 1: time dependent</h1>
 
+    <h3>overview</h3>
+
     <p>
-       <pre>
+        renderFig1() is just a wrapper function and a little bit useless if i'm completely honest. It calls 
+        drawDetectionDistributionCanvas() passing the canvas to draw on, resolution, some global variables
+        and the time interval.
+    </p>
+
+    <p>
+        drawDetectionDistributionCanvas() creates an array of size resolution x resolution, meaning the 'image' it
+        produces is square regardless of the aspect ratio of the canvas on screen. This array is in practice a 
+        resolution x resolution matrix but is stored as a one dimensional array. For each point in this array it 
+        calls boundaryFlux() passing its y and t value (x is always 10)
+    </p>
+
+    <p>
+        boundaryFlux then sends its arguments on to psiAndGradAt() to get psi norm squared and stores it as rho 
+        (psiAndGradAt is explained <a class="nav-link" href="docs/DoubleSlit/velocityAt.html">here</a>) then gets velocity at that point by calling velocityRaw()
+        (which does the same as <a class="nav-link" href="docs/DoubleSlit/velocityAt.html">velocityAt()</a> except it doesn't clamp the velocity). the probabilityFlux
+        is then given by: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\rho = |\Psi|^2,\qquad \mathrm{flux} = \rho v_n</math-field>
+        <br>
+        where <math-field read-only virtual-keyboard-mode="off" menu-items="[]">v_n</math-field> is the velocity component normal to the boundary, in the case of the screen at x=10, this is: <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">J_x = \rho v_x</math-field>
+    </p>
+
+    <p>
+        That value is stored as a weight (w) for that pixel (x,y) and, if that value is the greatest value seen yet, stored as
+        maxW. when all pixels have been given a weight, their respective values are converted to a number between 0-255,
+        where maxW = 255 and 0 = 0, and drawn to canvas as rgb(w,w,w).
+    </p>
+
+
+    <div class="flowchart">
+        <div class="box">renderFig1()</div>
+    
+        <div class="arrow">→</div>
+    
+        <div class="box">drawDetection<br/>Distribution<br>Canvas()</div>
+
+        <div class="arrow">→</div>
+    
+        <div class="group">
+            <div class="box">boundaryFlux()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">psiAndGradAt()</div>
+            <div class="down-arrow">↓</div>
+            <div class="box">velocityRaw()</div>
+        </div>
+    </div>
+
+    <pre>
         function drawDetectionDistributionCanvas({
             canvas,
             timeResolution,   // tSteps
@@ -68,57 +118,5 @@
 
             ctx.putImageData(image, 0, 0)
         }
-        </pre>
-    </p>
-
-    <h3>overview</h3>
-
-    <p>
-        renderFig1() is just a wrapper function and a little bit useless if i'm completely honest. It calls 
-        drawDetectionDistributionCanvas() passing the canvas to draw on, resolution, some global variables
-        and the time interval.
-    </p>
-
-    <p>
-        drawDetectionDistributionCanvas() creates an array of size resolution x resolution, meaning the 'image' it
-        produces is square regardless of the aspect ratio of the canvas on screen. This array is in practice a 
-        resolution x resolution matrix but is stored as a one dimensional array. For each point in this array it 
-        calls boundaryFlux() passing its y and t value (x is always 10)
-    </p>
-
-    <p>
-        boundaryFlux then sends its arguments on to psiAndGradAt() to get psi norm squared and stores it as rho 
-        (psiAndGradAt is explained <a class="nav-link" href="docs/DoubleSlit/velocityAt.html">here</a>) then gets velocity at that point by calling velocityRaw()
-        (which does the same as <a class="nav-link" href="docs/DoubleSlit/velocityAt.html">velocityAt()</a> except it doesn't clamp the velocity). the probabilityFlux
-        is then given by: <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">\rho = |\Psi|^2,\qquad \mathrm{flux} = \rho v_n</math-field>
-        <br>
-        where <math-field read-only virtual-keyboard-mode="off" menu-items="[]">v_n</math-field> is the velocity component normal to the boundary, in the case of the screen at x=10, this is: <br>
-        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">J_x = \rho v_x</math-field>
-    </p>
-
-    <p>
-        That value is stored as a weight (w) for that pixel (x,y) and, if that value is the greatest value seen yet, stored as
-        maxW. when all pixels have been given a weight, their respective values are converted to a number between 0-255,
-        where maxW = 255 and 0 = 0, and drawn to canvas as rgb(w,w,w).
-    </p>
-
-
-    <div class="flowchart">
-        <div class="box">renderFig1()</div>
-    
-        <div class="arrow">→</div>
-    
-        <div class="box">drawDetection<br/>Distribution<br>Canvas()</div>
-
-        <div class="arrow">→</div>
-    
-        <div class="group">
-            <div class="box">boundaryFlux()</div>
-            <div class="down-arrow">↓</div>
-            <div class="box">psiAndGradAt()</div>
-            <div class="down-arrow">↓</div>
-            <div class="box">velocityRaw()</div>
-        </div>
-    </div>
+    </pre>
 </section>
