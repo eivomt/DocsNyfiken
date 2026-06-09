@@ -2,58 +2,86 @@
     <h1>Uncertainty</h1>
 
     <p>
-        have you ever applied a film to a surface and found theres a little air bubble in it so you try and press it down and it 
-        works so you're real happy before you notice the air bubble just appeared somewhere else. That's pretty much the 
-        uncertainty principle, there will always be an air bubble.
+        The uncertainty principle is one of the central results of quantum mechanics. It states that certain pairs of
+        physical observables cannot simultaneously be known with arbitrary precision. Improving the precision of one
+        observable necessarily reduces the precision with which its complementary observable can be specified.
     </p>
 
     <p>
-        A visualization of 
-        <a href="https://en.wikipedia.org/wiki/Uncertainty_principle" target="_blank">Heisenbergs uncertainty principle</a> 
-        showing the effect of the narrowing of knowledge of an observable on the knowledge of its
-        <a href="https://en.wikipedia.org/wiki/Complementarity_(physics)" target="_blank">complementary observable</a>. In this 
-        case the chosen pair of complementary observables are position and momentum, a true classic. 
+        This visualization explores
+        <a href="https://en.wikipedia.org/wiki/Uncertainty_principle" target="_blank">
+            Heisenberg's uncertainty principle
+        </a>
+        using the canonical pair of complementary observables: position and momentum. The relationship between their
+        uncertainties is given by
     </p>
 
     <p>
-        Such a classic in fact that my man Griffiths says: <br> <br>
-        <i>In a deep sense all of the mysteries of quantum mechanics can be traced to the fact that position and momentum do 
-        not commute</i> <br> <br>
-        I'll be honest i dont know why he says so but it sure sounds profound.
-    </p>
-
-    <p>
-        Both properties cannot be known simultaneously: <br> <br>
         <math-field read-only virtual-keyboard-mode="off" menu-items="[]" style="font-size: x-large;">
             \sigma_x \sigma_p \geq \frac{\hbar}{2}
         </math-field>
-        <!-- hit men ikke lenger -->
     </p>
 
     <p>
-        Users can change the mean value of position and momentum and set <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+        The principle does not arise from limitations of measurement technology. Rather, it is a fundamental property
+        of quantum systems and is closely connected to the fact that the position and momentum operators do not commute.
+        As David Griffiths notes:
+    </p>
+
+    <i>
+        <blockquote>
+            In a deep sense, all of the mysteries of quantum mechanics can be traced to the fact that position and momentum
+            do not commute.
+        </blockquote>
+    </i>
+
+    <p>
+        While the full significance of this statement extends well beyond the scope of this visualization, the
+        uncertainty relation provides one of its most direct consequences.
+    </p>
+
+    <h3>Interaction</h3>
+
+    <p>
+        The user can adjust the mean position, mean momentum, and position uncertainty
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             \sigma_x
-        </math-field>, resulting in the respective graphs moving 
-        and changing shapes accordingly. The blue graph represents position while the red graph represents momentum. As <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
-            \sigma_x
-        </math-field> 
-        is changed one becomes narrower while the other is more spread out. There's an upper and lower limit to <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
-            \sigma_x
-        </math-field>, while 
-        <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
-            \sigma_x
-        </math-field> and <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
-            \sigma_p
-        </math-field> can in theory be larger or smaller than this (approaching 0 or infinity), that would allow the plots to be 
-        infinitely tall.
+        </math-field>.
+        The blue curve represents the probability distribution in position space, while the red curve represents the
+        corresponding distribution in momentum space.
     </p>
 
     <p>
-        Setting <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+        Changing the mean values shifts the distributions along their respective axes. Changing
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             \sigma_x
-        </math-field> indirectly sets <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
+        </math-field>
+        alters the widths of both distributions: as the position distribution becomes narrower, the momentum
+        distribution becomes broader, and vice versa.
+    </p>
+
+    <p>
+        The visualization imposes upper and lower limits on
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field>
+        for practical reasons. In principle, the uncertainties may become arbitrarily large or arbitrarily small,
+        approaching infinity or zero. Such values would produce distributions that are impractical to display on a
+        finite canvas.
+    </p>
+
+    <h3>Minimum-Uncertainty States</h3>
+
+    <p>
+        The visualization displays Gaussian wave packets that saturate the uncertainty bound. Consequently,
+        changing
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x
+        </math-field>
+        automatically determines the corresponding momentum uncertainty
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             \sigma_p
-        </math-field>, because we are plotting the maximum possible accuracy for both.
+        </math-field>.
     </p>
 
     <pre>
@@ -62,37 +90,32 @@
     </pre>
 
     <p>
-        as always, we set <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+        Throughout the simulation we use natural units with
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
             \hbar = 1
-        </math-field> to simplify:
+        </math-field>.
+        The uncertainty relation therefore becomes
     </p>
 
     <p>
-        <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
-            \sigma_p = \frac{1}{2 \sigma_x}
-        </math-field> <br>
-        <math-field  read-only virtual-keyboard-mode="off" menu-items="[]">
-            \sigma_x \sigma_p = \frac{\sigma_x}{2 \sigma_x} = \frac{1}{2}
-        </math-field> <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_p = \frac{1}{2\sigma_x}
+        </math-field>
+        <br>
+        <math-field read-only virtual-keyboard-mode="off" menu-items="[]">
+            \sigma_x \sigma_p = \frac{\sigma_x}{2\sigma_x}
+            = \frac{1}{2}
+        </math-field>
     </p>
 
-    <h3>dependencies</h3>
+    <p>
+        The displayed states therefore achieve the minimum uncertainty allowed by quantum mechanics. Any further
+        reduction in one uncertainty necessarily increases the other.
+    </p>
+
+    <h3>Dependencies</h3>
 
     <ul>
-        <li>p5js</li>
+        <li>p5.js</li>
     </ul>
-
-    <!-- <p>
-        But what does all this mean in practice? Say we have a particle just sort of weezing about in our neat one dimensional 
-        world, as particles so often do, and 
-        we measure it's position with total accuracy. Our wavefunction collapses, the graph of the probability distribution of 
-        its position becomes a delta function (which 
-        <a href="https://media.tenor.com/JgOuejx_hzMAAAAe/quotation-marks.png" target="_blank">technically</a>
-         isn't a function at all, an infinitely tall, infinitely narrow curve, at 
-        x=whatever position we measured, whose integral equals 1. If all this seems a bit artificial to you, then you and me both 
-        bud). What does this mean for the probability distribution of its momentum? The only way for it to obey Heisenbergs 
-        uncertainty principle is for it to become infinetely spread out. So if we know the particle's position excactly, we know 
-        excactly nothing of its momentum.
-    </p> -->
-
 </section>
