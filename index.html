@@ -11,34 +11,69 @@
 </head>
 <body>
 
-
     <div id="content">
         <h1>docs: Nyfiken.cs.oslomet.no</h1>
+        
+        <p>
+            This document serves as a technical overview of the website
+            <i>nyfiken.cs.oslomet.no</i>. It is intended for future developers
+            tasked with maintaining, extending, or rebuilding parts of the project.
+        </p>
+        
+        <p>
+            The site was developed primarily as a collection of educational physics
+            visualizations. As a consequence, the codebase evolved organically
+            around individual simulations rather than from a single architectural
+            plan. While functional, the implementation is not always consistent.
+            Naming conventions vary between modules, code reuse is limited, and
+            remnants of earlier development stages remain throughout the project.
+            The CSS in particular reflects the incremental nature of the site's
+            development: layouts are largely constructed using flexbox, margins,
+            and padding rather than a unified grid system.
+        </p>
+        
+        <p>
+            For this reason, the focus of this documentation is less on explaining
+            every implementation detail and more on describing the underlying
+            physics, numerical methods, and design decisions behind the
+            visualizations. Future maintainers will likely be familiar with the web
+            technologies involved, while some of the scientific concepts may be
+            less immediately accessible.
+        </p>
+        
+        <p>
+            Most visualizations are intentionally self-contained. Individual pages
+            can generally be modified, replaced, or rewritten without requiring a
+            detailed understanding of the entire site. This modular structure
+            should make it relatively straightforward to improve individual
+            components over time.
+        </p>
+        
+        <h3>A Final Note</h3>
+        
+        <p>
+            The codebase was built over an extended period of experimentation, and
+            some of that history remains visible in the source. You may encounter
+            inconsistent naming conventions, abandoned code fragments, or solutions
+            that made perfect sense at the time but are less obvious today.
+        </p>
+        
+        <p>
+            The good news is that the bar has been set low for leaving
+            the project in a better state than it was found. If this documentation
+            saves you a few hours of reverse engineering or a few moments of
+            existential debugging—then it has served its purpose.
+        </p>
+        
+        <p>
+            Good luck, and thank you for taking care of the project.
+        </p>
     </div>
-
-    <!-- <p>
-        Welcome to the documentation of the site nyfiken.cs.oslomet.no, written for whoever gets to maintain this. To you I offer 
-        an apology, the code is not written with readability in mind, comments are few and far between, snippets that do nothing 
-        now, but were useful at some point in the development are everywhere. Also there's little code reuse, the CSS for each 
-        subpage has its own unique flair and naming conventions. On the topic of CSS, there's almost no use of grids, its all 
-        a mess of a little bit of padding here, margin there and flex-boxes for the placement of elements.
-    </p>
-
-    <p>
-        I was told to write this documentation for someone at the end of their IT bachelor, and so I've focused on the physics, 
-        since that's likely to be new to you. I hope this helps, good luck!
-    </p>
-
-    <h3>the Bright side</h3>
-
-    <p>
-        I've set the bar low for you to leave this code base cleaner than you found it, oh and i've tried to keep a light hearted 
-        tone, as I guess there will be some frustration involved whenever you scroll through this documentation
-    </p> -->
-
-
+            
 
     <aside id="sidebar">
+
+        <button class="nav-item" id="home">Home</button>
 
         <button class="nav-item" data-target="bound" data-page="docs/Bound/bound.html">
             Bound states
